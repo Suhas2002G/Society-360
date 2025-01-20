@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2">
+    <div class="container admin-notice-view-container">
+        <h1 class="admin-notice-view-title">Notices</h1>
+
+        <!-- Success/Error messages -->
+        {% if successmsg %}
+        <div id="success" class="alert alert-success admin-notice-view-success" role="alert">
+            {{ successmsg }}
+        </div>
+        {% elif errormsg %}
+        <div id="error" class="alert alert-danger admin-notice-view-danger" role="alert">
+            {{ errormsg }}
+        </div>
+        {% endif %}
+
+        <!-- Notices Cards -->
+        <div class="admin-notice-cards">
+            {% for notice in notices %}
+            <div class="card admin-notice-card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            <h5 class="card-title admin-notice-title">{{ notice.title }}</h5>
+                            <p class="card-text admin-notice-category">
+                                <strong>Category:</strong> {{ notice.category }}
+                            </p>
+                            <p class="card-text admin-notice-priority">
+                                <strong>Priority:</strong> {{ notice.priority }}
+                            </p>
+                            <p class="card-text admin-notice-description">{{ notice.des }}</p>
+                            
+            
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <strong></strong> {{ notice.created_at|date:"d-m-Y H:i:s" }}
+                                </small>
+                                
+                            </p>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    
+    </div>
+</div>
+{% endblock 'main' %}

@@ -1,0 +1,52 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2">
+    <div class="container admin-usermanage-container">
+        <h1 class="admin-usermanage-title">User Management</h1>
+        
+        <!-- Success/Error messages -->
+        {% if successmsg %}
+        <div id="success" class="alert alert-success admin-usermanage-success" role="alert">
+            {{ successmsg }}
+        </div>
+        {% elif errormsg %}
+        <div id="error" class="alert alert-danger admin-usermanage-danger" role="alert">
+            {{ errormsg }}
+        </div>
+        {% endif %}
+
+        <!-- User Table -->
+        <table class="table admin-usermanage-table">
+            <thead>
+                <tr>
+                    <th scope="col">Flat No.</th>
+                    <th scope="col">Owner Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Mobile</th>
+                    <!-- <th scope="col">Status</th> -->
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_data in users_flats %}
+                <tr>
+                    <td>{{ user_data.flat.flat_no }}</td>
+                    <td>{{ user_data.user.first_name }}</td>
+                    <td>{{ user_data.user.email }}</td>
+                    <td>{{ user_data.flat.mobile }}</td>
+                    <!-- <td>{{ user_data.user.is_active|yesno:"Active,Inactive" }}</td> -->
+                    <td>
+                        <!-- <a href="" class="btn btn-warning admin-usermanage-edit-btn">Edit</a> -->
+                        <a href="" class="btn btn-danger admin-usermanage-delete-btn">Remove Owner</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Add User Button -->
+        <a href="" class="btn btn-primary admin-usermanage-add-btn">Add New User</a>
+    </div>
+</div>
+{% endblock 'main' %}

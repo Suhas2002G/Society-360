@@ -1,0 +1,51 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2">
+    <div class="container admin-notice-container">
+        <h4 class="admin-notice-title">Post a New Notice</h4>     
+        {% if successmsg %}
+        <div id="success" class="alert alert-success admin-notice-success" role="alert" data-redirect-url="/admin-dashboard">
+            {{successmsg}}
+        </div>
+        {% elif errormsg %}
+        <div id="success" class="alert alert-danger admin-notice-danger" role="alert">
+            {{errormsg}}
+        </div>
+        {% endif %}
+  
+        <form class="admin-notice-form" method="POST" action="">
+            {% csrf_token %}
+            <div class="mb-3 admin-notice-field">
+                <label for="noticeTitle" class="form-label admin-notice-label">Notice Title</label>
+                <input type="text" class="form-control admin-notice-input" id="noticeTitle" name="title" aria-label="Notice Title" placeholder="Enter notice title">
+            </div>
+            <div class="mb-3 admin-notice-field">
+                <label for="noticeCategory" class="form-label admin-notice-label">Category</label>
+                <select class="form-select admin-notice-select" id="noticeCategory" name="category" aria-label="Notice Category" >
+                    <option value="" disabled selected>Select category</option>
+                    <option value="General">General</option>
+                    <option value="Event">Event</option>
+                    <option value="Maintenance">Maintenance</option>
+                </select>
+            </div>
+            <div class="mb-3 admin-notice-field">
+                <label for="noticeDescription" class="form-label admin-notice-label">Description</label>
+                <textarea class="form-control admin-notice-textarea" id="noticeDescription" name="description" aria-label="Notice Description" rows="5" placeholder="Enter the notice description" ></textarea>
+            </div>
+            <div class="mb-3 admin-notice-field">
+                <label for="noticePriority" class="form-label admin-notice-label">Priority</label>
+                <select class="form-select admin-notice-select" id="noticePriority" name="priority" aria-label="Notice Priority" >
+                    <option value="" disabled selected>Select priority</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <button type="submit" class="btn admin-notice-submit mt-3">Post Notice</button>
+        </form>
+    </div>
+</div>
+
+<script src="{% static '/script.js' %}"></script>
+{% endblock 'main' %}

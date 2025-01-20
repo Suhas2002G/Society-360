@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2">
+    <div class="container admin-amenity-view-container">
+        <h1 class="admin-amenity-view-title">Book Amenities</h1>
+        
+        <!-- Success/Error messages -->
+        {% if successmsg %}
+        <div id="success" class="alert alert-success admin-amenity-view-success" role="alert">
+            {{ successmsg }}
+        </div>
+        {% elif errormsg %}
+        <div id="error" class="alert alert-danger admin-amenity-view-danger" role="alert">
+            {{ errormsg }}
+        </div>
+        {% endif %}
+
+        <!-- Amenity Cards -->
+        <div class="row admin-amenity-view-cards">
+            {% for amenity in amenities %}
+            <div class="col-md-4 col-sm-6 mb-4 admin-amenity-view-card">
+                <div class="card">
+                    <img src="{{ amenity.img.url }}" class="card-img-top admin-amenity-view-img" alt="{{ amenity.amenity }}">
+                    <div class="card-body admin-amenity-view-body">
+                        <h5 class="card-title admin-amenity-view-title">{{ amenity.amenity }}</h5>
+                        <p class="card-text admin-amenity-view-rent">Rent: ₹{{ amenity.rent }}</p>
+                        <p class="card-text admin-amenity-view-description">{{ amenity.des }}</p>
+                        <a href="/book-amenity/{{amenity.id}}" class="btn btn-primary btn-edit-amenity">Book</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        
+    </div>
+</div>
+{% endblock 'main' %}

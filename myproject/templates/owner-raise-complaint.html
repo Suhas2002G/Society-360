@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2 owner-raisecomplaint-container">
+    <h2 class="owner-raisecomplaint-header">Raise a Complaint</h2>
+    <form id="owner-raisecomplaint-form">
+        <div class="form-group owner-raisecomplaint-field">
+            <label for="complaintType" class="owner-raisecomplaint-label">Complaint Type</label>
+            <select id="complaintType" name="complaintType" class="form-control owner-raisecomplaint-input">
+                <option value="" disabled selected>Select a complaint type</option>
+                <option value="cleanliness">Cleanliness</option>
+                <option value="water_supply">Water Supply</option>
+                <option value="security">Security</option>
+                <option value="electricity">Electricity</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group owner-raisecomplaint-field">
+            <label for="description" class="owner-raisecomplaint-label">Description</label>
+            <textarea id="description" name="description" rows="6" class="form-control owner-raisecomplaint-input" placeholder="Provide a detailed description of the issue"></textarea>
+        </div>
+
+        <div class="form-group owner-raisecomplaint-field">
+            <label for="attachment" class="owner-raisecomplaint-label">Upload Attachment (if any)</label>
+            <input type="file" id="attachment" name="attachment" class="form-control-file owner-raisecomplaint-input">
+        </div>
+
+        <div class="form-group owner-raisecomplaint-field">
+            <label for="contactNumber" class="owner-raisecomplaint-label">Contact Number</label>
+            <input type="text" id="contactNumber" name="contactNumber" class="form-control owner-raisecomplaint-input" placeholder="Enter your 10-digit contact number">
+        </div>
+
+        <button type="submit" class="btn owner-raisecomplaint-btn">Submit Complaint</button>
+    </form>
+</div>
+{% endblock 'main' %}
