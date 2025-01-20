@@ -26,7 +26,10 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg custom-navbar sticky-top">
       <div class="container-fluid">
-        <a class="navbar-brand custom-brand" href="#">Society360</a>
+        <a class="navbar-brand" href="#">
+          <img src="{% static '/images/logo.png' %}" alt="Bootstrap" width="44" height="44" style="margin-left: 20px;">
+        </a>
+        <a class="navbar-brand custom-brand" href="#" style="color: white; font-weight: 700; ">Society360</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -44,9 +47,9 @@
               <a class="nav-link active custom-link" href="/admin-dashboard"><i class="bi bi-book mx-1"></i>Dashboard</a>
             </li>
             {% if user.is_authenticated %}
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link custom-link" href="/admin-viewnotice"><i class="bi bi-envelope mx-2"></i>View Notices</a>
-            </li>
+            </li> -->
             <li class="nav-item">
               <a class="nav-link custom-link" href="admin-view-amenity">View Amenity</a>
             </li> 
@@ -82,11 +85,11 @@
         <div class="col-md-2 col-sm-4 admin-dash-sidebar ">
           <!-- <h2>Quick Links</h2> -->
           <nav class="nav flex-column mt-3">
-            <a class="nav-link" href="/admin-dashboard">Dashboard</a>
-            <a class="nav-link" href="/admin-addnotice">Add Notices</a>
+            <!-- <a class="nav-link" href="/admin-dashboard">Dashboard</a> -->
+            <a class="nav-link" href="/admin-viewnotice">Notices</a>
             <a class="nav-link" href="/admin-usermanage">Owner Details</a>
             <a class="nav-link" href="">Maintenance</a>
-            <a class="nav-link" href="/admin-add-poll">Add poll</a>
+            <a class="nav-link" href="/admin-add-poll">Poll & Survey</a>
             <a class="nav-link" href="#">Amenity Booking</a>
             <a class="nav-link" href="#">Manage Complaints</a>
             <a class="nav-link" href="/logout">Logout</a>

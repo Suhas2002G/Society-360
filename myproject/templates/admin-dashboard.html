@@ -1,48 +1,89 @@
 {% extends 'admin-base.html' %}
 {% load static %}
 {% block 'main' %}
-<!-- <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-2 admin-dash-sidebar">
-        <nav class="nav flex-column">
-          <a class="nav-link" href="#">Dashboard</a>
-          <a class="nav-link" href="#">Add Notices</a>
-          <a class="nav-link" href="#">User Management</a>
-          <a class="nav-link" href="#">Maintenance</a>
-          <a class="nav-link" href="#">Amenity Booking</a>
-          <a class="nav-link" href="#">Logout</a>
-        </nav>
-      </div> -->
-      <!-- Main Content -->
-      <div class="col-md-10">
-        <div class="admin-dash-header">
-          <h1>Welcome, Admin</h1>
-        </div>
-        <div class="admin-dash-content mt-4">
-          <h2>Dashboard Overview</h2>
-          <p>Here you can monitor and manage all administrative tasks.</p>
-          <div class="row mt-4">
-            <div class="col-md-4">
-              <div class="p-3 text-center" style="background-color: #C4DAD2; border-radius: 8px;">
-                <h3>150</h3>
-                <p>Total Users</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="p-3 text-center" style="background-color: #6A9C89; color: #FFFFFF; border-radius: 8px;">
-                <h3>85</h3>
-                <p>Active Sessions</p>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="p-3 text-center" style="background-color: #16423C; color: #FFFFFF; border-radius: 8px;">
-                <h3>25</h3>
-                <p>Pending Requests</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="col-md-10 col-sm-8 mb-2">
+  <div class="container admin-dashboard">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1 class="dashboard-title">Welcome, Admin</h1>
+        <p class="dashboard-subtitle">Today is {{ current_date }}. Stay on top of your tasks!</p>
+    </div>
 
+    <!-- Quick Stats Section -->
+    <div class="row quick-stats">
+        <div class="col-md-2 stat-card">
+            <h3>Total Notices</h3>
+            <p>{{ ncount }}</p>
+        </div>
+        
+      
+        <div class="col-md-2 stat-card">
+            <h3>Residents</h3>
+            <p>{{ ocount }}</p>
+        </div>
 
+        <div class="col-md-3 stat-card">
+            <h3>Payments Collected</h3>
+            <p>₹{{ payments_collected }}</p>
+        </div>
+
+        <div class="col-md-2 stat-card">
+            <h3>Pending Complaints</h3>
+            <p>{{ compCount }}</p>
+        </div>
+
+    </div>
+
+    <!-- Dashboard Cards Section -->
+    <div class="row dashboard-sections">
+        <!-- Notices Section -->
+        <div class="col-md-4">
+            <div class="dashboard-card notices">
+                <h3>Notices</h3>
+                <p>Manage and view society notices.</p>
+                <a href="/admin-notices" class="btn btn-primary">View Notices</a>
+            </div>
+        </div>
+
+        <!-- Maintenance Payments Section -->
+        <div class="col-md-4">
+            <div class="dashboard-card maintenance">
+                <h3>Maintenance Payments</h3>
+                <p>Track and update maintenance payments.</p>
+                <a href="/admin-maintenance" class="btn btn-primary">Manage Payments</a>
+            </div>
+        </div>
+
+        <!-- Residents Section -->
+        <div class="col-md-4">
+            <div class="dashboard-card residents">
+                <h3>Residents</h3>
+                <p>Manage resident information and access details.</p>
+                <a href="/admin-residents" class="btn btn-primary">Manage Residents</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row dashboard-sections">
+        <!-- Complaints Section -->
+        <div class="col-md-4">
+            <div class="dashboard-card complaints">
+                <h3>Complaints</h3>
+                <p>Review and address complaints from residents.</p>
+                <a href="/admin-complaints" class="btn btn-primary">View Complaints</a>
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div class="col-md-4">
+            <div class="dashboard-card events">
+                <h3>Events</h3>
+                <p>Organize and manage society events.</p>
+                <a href="/admin-events" class="btn btn-primary">Manage Events</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 {% endblock 'main' %}
+

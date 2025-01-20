@@ -26,9 +26,13 @@
     />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light sticky">
+      
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">MyBrand</a>
+        <a class="navbar-brand" href="#">
+          <img src="{% static '/images/logo.png' %}" alt="Bootstrap" width="44" height="44" style="margin-left: 20px;">
+        </a>
+        <a class="navbar-brand" href="#" style="color: white; font-weight: 700; ">Society-360</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -40,7 +44,7 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link active" id="homeLink" href="#">Home</a>
@@ -54,28 +58,21 @@
             <li class="nav-item">
               <a class="nav-link" id="contactLink" href="#">Contact</a>
             </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Login
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/owner-login">User Login</a></li>
+                <li><a class="dropdown-item" href="/admin-login">Admin Login</a></li>
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-2 col-sm-4 admin-dash-sidebar">
-          <!-- <h2>Quick Links</h2> -->
-          <nav class="nav flex-column mt-3">
-            <a class="nav-link" href="/owner-home">Home</a>
-            <a class="nav-link" href="/owner-notice">Notices</a>
-            <a class="nav-link" href="/owner-maintenance">Pay Maintenance</a>
-            <a class="nav-link" href="/owner-book-amenity">Amenity Booking</a>
-            <a class="nav-link" href="/owner-raise-complaint"
-              >Raise Complaints</a
-            >
-            <a class="nav-link" href="/logout">Logout</a>
-          </nav>
-        </div>
-      </div>
-    </div>
-  </body>
-</html>
+
+
+    
+

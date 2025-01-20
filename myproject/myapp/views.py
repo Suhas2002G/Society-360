@@ -1,17 +1,13 @@
-import os
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
 from myapp.models import Notice,Flat,Amenity,Poll
-from django.db.models import Q  
-import logging
 from django.utils import timezone
-from datetime import date
+from django.db.models import Q  
 import razorpay
 from django.core.mail import send_mail 
-from dotenv import load_dotenv
-load_dotenv()
+
 
 # index page
 def home(request):
@@ -85,69 +81,13 @@ def owner_home(request):
     return render(request, 'owner-home.html', context)
 
 
+
+# Notice Board for Owner
 def owner_notice(request):
     context={}
     notices = Notice.objects.all().order_by('-created_at')
     context['notices'] = notices
     return render(request, 'owner-notice.html', context)
-
-
-def owner_book_amenity(request):
-    context={}
-    try:
-        amenities = Amenity.objects.all()  # Fetching all amenities
-        context['amenities'] = amenities
-    except Exception as e:
-        context['errormsg'] = f"Error fetching amenities: {e}"
-
-    return render(request, 'owner-bookamenity.html', context)
-
-
-# Owner can Raise Complaint
-def owner_raise_complaint(request):
-    if request.method == 'GET':
-        return render(request, 'owner-raise-complaint.html')
-    else:
-        pass
-
-
-
-# Owner Maintenance Payment
-def owner_maintenance(request):
-   pass
-
-
-
-# Makepayment
-def makepayment(request,amount_to_pay):
-    context={}
-    
-    return render(request, 'pay.html', context)
-    
-
-
-# # Payment-Success page after paying Maintenance & Email Integration
-def paymentsuccess(request):
-    
-    sub='Society360 Monthly Maintenance'
-    msg="We have received monthly maintenance from your side. Thank you..! "
-    frm= os.getenv("EMAIL_HOST_USER")
-
-    u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
-    to=u[0].email
-
-    send_mail(
-        sub,
-        msg,
-        frm,
-        [to],               #list beacause we can send mail to multiple emails-ids
-        fail_silently=False
-    )
-    return render(request, 'paymentsuccess.html')
-
-
-
-
 
 
 
@@ -180,9 +120,24 @@ def admin_login(request):
 
 # Admin Dashboard
 def admin_dashboard(request):
+    context={}
     if not request.user.is_authenticated:
         return redirect('/adminlogin')
-    return render(request, 'admin-dashboard.html')
+    else:
+        
+        current_datetime = timezone.now()  # Get current date (date and time)
+        current_date = current_datetime.date()  # Get only the current date (without time)
+
+        ownerCount=Flat.objects.count()
+        noticeCount = Notice.objects.count()
+        # complaintCount = Complaint.objects.count()
+        context={
+            'ocount': ownerCount,
+            'ncount' : noticeCount,
+            'current_date' : current_date
+            # 'compCount':complaintCount,
+        }
+        return render(request, 'admin-dashboard.html', context)
 
 
 def admin_add_notice(request):

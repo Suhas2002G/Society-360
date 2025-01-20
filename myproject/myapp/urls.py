@@ -11,11 +11,11 @@ urlpatterns = [
     path('logout', views.owner_logout),
     path('owner-home', views.owner_home),
     path('owner-notice', views.owner_notice),
-    path('owner-book-amenity', views.owner_book_amenity),
-    path('owner-maintenance', views.owner_maintenance),
-    path('owner-raise-complaint', views.owner_raise_complaint),
-    path('makepayment/<amount_to_pay>',views.makepayment),
-    path('paymentsuccess',views.paymentsuccess),
+    # path('owner-book-amenity', views.owner_book_amenity),
+    # path('owner-maintenance', views.owner_maintenance),
+    # path('owner-raise-complaint', views.owner_raise_complaint),
+    # path('makepayment/<amount_to_pay>',views.makepayment),
+    # path('paymentsuccess',views.paymentsuccess),
 
 
 
