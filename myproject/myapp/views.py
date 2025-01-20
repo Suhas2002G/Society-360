@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
@@ -9,7 +10,8 @@ from django.utils import timezone
 from datetime import date
 import razorpay
 from django.core.mail import send_mail 
-
+from dotenv import load_dotenv
+load_dotenv()
 
 # index page
 def home(request):
@@ -119,33 +121,6 @@ def owner_maintenance(request):
 # Makepayment
 def makepayment(request,amount_to_pay):
     context={}
-    amt = amount_to_pay
-    client = razorpay.Client(auth=("rzp_test_c66P03WlENQIxJ", "Om1tOy0A2HuYZUT0rHFnZgTd"))
-
-    amt = int(float(amt) * 100) # to convert amount to paise 
-
-    data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
-    payment = client.order.create(data=data)
-    context['payment']=payment
-    #print(payment)      #check whether amount is printing on terminal 
-    # return HttpResponse("Amount Fetched")
-
-    # Get the current date
-    current_date = timezone.now().date()
-    
-    # Get the current month (using the first day of the month for easy comparison)
-    current_month = date(current_date.year, current_date.month, 1)
-
-    payment_date = current_date
-
-    payment = MaintenancePayment(
-            uid=request.user,
-            month=current_month,
-            payment_date=payment_date,
-            amount=amount_to_pay,
-            # penalty=penalty
-        )
-    payment.save() 
     
     return render(request, 'pay.html', context)
     
@@ -156,7 +131,7 @@ def paymentsuccess(request):
     
     sub='Society360 Monthly Maintenance'
     msg="We have received monthly maintenance from your side. Thank you..! "
-    frm='suhas8838@gmail.com'
+    frm= os.getenv("EMAIL_HOST_USER")
 
     u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
     to=u[0].email

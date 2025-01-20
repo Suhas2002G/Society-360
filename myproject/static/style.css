@@ -17,7 +17,21 @@ body{
 }
 
 /* header.html starts here  */
-
+.navbar {
+  background-color: #FF204E;
+}
+.navbar-nav .nav-link {
+  color: white !important;
+}
+.navbar-nav .nav-link.active {
+  color: #A0153E !important;
+}
+.navbar-nav .nav-link:hover {
+  color: #5D0E41 !important;
+}
+.navbar-toggler-icon {
+  background-color: #00224D;
+}
 /* header.html endss here  */
 
 
