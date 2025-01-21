@@ -544,6 +544,16 @@ def admin_edit_notice(request,nid):
 
 
 
+def admin_booking(request):
+    context={}
+    b = BookingAmenity.objects.all()
+    context['data']=b
+    return render(request, 'admin-booking-page.html', context)
+
+
+
+
+
 # Admin Add poll
 def admin_add_poll(request):
     context={}

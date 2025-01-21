@@ -37,6 +37,7 @@ urlpatterns = [
     path('admin-viewnotice', views.admin_view_notice),
     path('admin-add-poll', views.admin_add_poll),
     path('admin-view-poll', views.admin_view_poll),
+    path('admin-booking', views.admin_booking),
     
     
 
