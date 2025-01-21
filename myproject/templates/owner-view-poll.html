@@ -31,7 +31,7 @@
       </div>
       <!-- Vote Button -->
       <div class="col-md-1">
-        <button class="view-poll-vote-btn">Vote</button>
+        <a href="/vote/{{i.id}}/1" class="view-poll-vote-btn">Vote</a>
       </div>
     </div>
 
@@ -55,14 +55,14 @@
       </div>
       <!-- Vote Button -->
       <div class="col-md-1">
-        <button class="view-poll-vote-btn">Vote</button>
+        <a href="/vote/{{i.id}}/2" class="view-poll-vote-btn">Vote</a>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
   <div class="view-poll-footer">
-    <p>Total Votes: <strong>{{ i.votes }}</strong></p>
+    <p>Total Votes: <strong>{{i.votes_1}}</strong></p>
   </div>
 </div>
 {% endfor %} 

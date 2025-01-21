@@ -47,9 +47,9 @@ body{
   color: #FF204E !important;
 }
 .navbar-nav .nav-link:hover {
-  color: #5D0E41 !important;
+  color: #eeb3d9 !important;
   transition: transform 0.5s ease;
-  background-color: #fff;
+  /* background-color: #fff; */
   border-radius: 20px;
   transition: 0.5s ease-in-out;
 }
@@ -391,7 +391,7 @@ footer .social-icons a {
 
 /* Input Fields */
 .form-control {
-  border: 1px solid #A0153E;
+  /* border: 1px solid #A0153E; */
   border-radius: 10px;
   padding: 10px;
   font-size: 16px;
@@ -603,6 +603,89 @@ footer .social-icons a {
 
 
 
+/* owner-maintenance.html starts here  */
+.owner-maintenance-container {
+  margin: 20px auto;
+  padding: 25px;
+  border-radius: 8px;
+}
+
+.owner-maintenance-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 10px;
+  margin-top: 30px;
+  color: #333;
+}
+
+.owner-maintenance-payment, .owner-maintenance-history {
+  /* background-color: #fff; */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.owner-maintenance-payment-title, .owner-maintenance-history-title {
+  font-size: 20px;
+  color: #170f3e;
+  margin-bottom: 15px;
+}
+
+.owner-maintenance-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.owner-maintenance-input {
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.owner-maintenance-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.owner-maintenance-btn:hover {
+  background-color: #45a049;
+}
+.pay-btn{
+  text-decoration: none;
+  color: white;
+}
+
+.owner-maintenance-history-table th, .owner-maintenance-history-table td {
+  text-align: center;
+  padding: 10px;
+}
+
+.owner-maintenance-history-table th {
+  background-color: #d1e3f7;
+}
+
+.owner-maintenance-history-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.owner-maintenance-history-table td {
+  color: #555;
+}
+
+.owner-maintenance-history-table .text-center {
+  color: #888;
+}
+
+/* owner-maintenance.html ends here  */
+
 
 
 
@@ -793,6 +876,50 @@ footer .social-icons a {
 
 
 
+
+
+
+/* Search and Filter Form */
+form.d-flex {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  margin-top: -10px;
+}
+
+form.d-flex .form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+form.d-flex .form-control {
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+form.d-flex .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+}
+
+form.d-flex .btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+
+
+
+
+
 /* admin-addnotice.html starts here  */
 .admin-notice-container {
   margin-top: 20px;
@@ -927,9 +1054,10 @@ footer .social-icons a {
 }
 
 .admin-usermanage-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin-bottom: 20px;
   font-weight: bold;
+  display: inline-block;
 }
 
 .admin-usermanage-table {
@@ -1063,6 +1191,7 @@ footer .social-icons a {
   margin-bottom: 10px;
 }
 .admin-amenity-view-add-btn {
+  margin-top: 10px;
   margin-bottom: 30px;
   width: 250px;
 
@@ -1208,10 +1337,12 @@ footer .social-icons a {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .view-poll-vote-btn:hover {
   background-color: #0056b3;
+  color: white;
 }
 
 .view-poll-delete-btn {

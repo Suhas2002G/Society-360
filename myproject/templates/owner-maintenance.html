@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'main' %}
+
+    <h2 class="owner-maintenance-title">Monthly Maintenance</h2>
+    
+    <!-- Current Maintenance Payment -->
+    <div class="owner-maintenance-payment">
+        <h3 class="owner-maintenance-payment-title">Pay Your Maintenance Fee</h3>
+        
+        <form method="POST" action="">
+            
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="amount" class="owner-maintenance-label">Owner Name :</label>
+                <input type="text" id="amount" class="form-control owner-maintenance-input" value="{{ user.first_name }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="amount" class="owner-maintenance-label">Amount Due :</label>
+                <span class="already_paid" style="color: green;">{{ already_paid }}</span>
+                {% if amount %}
+                    <input type="text" id="amount" class="form-control owner-maintenance-input" value="₹{{ amount }}" disabled>
+                {% else %}
+                    <input type="text" id="amount" class="form-control owner-maintenance-input" value="₹{{ amount }}" disabled>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="payment_method" class="owner-maintenance-label">Payment to :</label>
+                <select class="form-control owner-maintenance-input" id="payment_method" name="payment_method" required {% if payment_status == 'paid' %} disabled {% endif %}>
+                    <option value="razorpay">Society-360</option>
+                    <!-- You can add other payment options here -->
+                </select>
+            </div>
+           
+        </form>
+        
+        {% if payment_status != 'paid' %}
+            <a href="/makepayment" class="owner-maintenance-btn">Pay Now</a>
+        {% else %}
+            <a href="#" class="owner-maintenance-btn disabled" style="pointer-events: none; opacity: 0.5;">Pay Now</a>
+        {% endif %}
+        
+    </div>
+    
+    <!-- Maintenance History -->
+    <div class="owner-maintenance-history">
+        <h3 class="owner-maintenance-history-title">Previous Maintenance History</h3>
+        <table class="table owner-maintenance-history-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount </th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in previous_payments %}
+                <tr>
+                    <td>{{ i.payment_date }}</td>
+                    <td>₹{{ i.amount }}</td>
+                    <td>Online</td>
+                    <td>Paid</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No previous payments available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock 'main' %}

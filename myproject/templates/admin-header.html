@@ -44,21 +44,21 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link active custom-link" href="/admin-dashboard"><i class="bi bi-book mx-1"></i>Dashboard</a>
+              <a class="nav-link  custom-link" href="/admin-dashboard"><i class="bi bi-book mx-1"></i>Dashboard</a>
             </li>
             {% if user.is_authenticated %}
             <!-- <li class="nav-item">
               <a class="nav-link custom-link" href="/admin-viewnotice"><i class="bi bi-envelope mx-2"></i>View Notices</a>
             </li> -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
               <a class="nav-link custom-link" href="admin-view-amenity">View Amenity</a>
-            </li> 
+            </li>  -->
             
             <li class="nav-item">
               <a class="nav-link custom-link" href="/logout"><i class="bi bi-box-arrow-in-left mx-2"></i>Logout</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href=""><i class="bi bi-person-circle mx-2"></i>Hi, Admin</a>
+              <a class="nav-link active" href=""><i class="bi bi-person-circle mx-2"></i>Hi, Admin</a>
           </li>
             {% else %}
   
@@ -88,10 +88,11 @@
             <!-- <a class="nav-link" href="/admin-dashboard">Dashboard</a> -->
             <a class="nav-link" href="/admin-viewnotice">Notices</a>
             <a class="nav-link" href="/admin-usermanage">Owner Details</a>
-            <a class="nav-link" href="">Maintenance</a>
-            <a class="nav-link" href="/admin-add-poll">Poll & Survey</a>
+            <a class="nav-link" href="/admin-maintenance">Maintenance</a>
+            <a class="nav-link" href="/admin-view-amenity">View Amenity</a>
+            <!-- <a class="nav-link" href="/admin-add-poll">Poll & Survey</a> -->
             <a class="nav-link" href="/admin-view-poll">View Poll</a>
-            <a class="nav-link" href="#">Amenity Booking</a>
+            <a class="nav-link" href="#">Bookings</a>
             <a class="nav-link" href="#">Manage Complaints</a>
             <a class="nav-link" href="/logout">Logout</a>
           </nav>

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="container admin-amenity-view-container">
+    <h1 class="admin-amenity-view-title">Book Amenities</h1>
+    
+    <!-- Success/Error messages -->
+    {% if successmsg %}
+    <div id="success" class="alert alert-success admin-amenity-view-success" role="alert">
+        {{ successmsg }}
+    </div>
+    {% elif errormsg %}
+    <div id="error" class="alert alert-danger admin-amenity-view-danger" role="alert" data-redirect-url="/owner-book-amenity">
+        {{ errormsg }}
+    </div>
+    <script>
+        // Redirect after 5 seconds
+        setTimeout(function() {
+            window.location.href = document.getElementById("error").getAttribute("data-redirect-url");
+        }, 2000);
+    </script>
+    {% endif %}
+
+    <!-- Amenity Cards -->
+    <div class="row admin-amenity-view-cards">
+        {% for amenity in amenities %}
+        <div class="col-md-4 col-sm-6 mb-4 admin-amenity-view-card">
+            <div class="card">
+                <img src="{{ amenity.img.url }}" class="card-img-top admin-amenity-view-img" alt="{{ amenity.amenity }}">
+                <div class="card-body admin-amenity-view-body">
+                    <h5 class="card-title admin-amenity-view-title">{{ amenity.amenity }}</h5>
+                    <p class="card-text admin-amenity-view-rent">Rent: ₹{{ amenity.rent }}</p>
+                    <p class="card-text admin-amenity-view-description">{{ amenity.des }}</p>
+                    
+                    
+                    <div class="d-flex align-items-center">
+                        <!-- Date Input Field -->
+                        <input 
+                            type="date" 
+                            class="form-control admin-amenity-view-date me-2" 
+                            id="booking_date_{{ amenity.id }}" 
+                            name="booking_date" 
+                            required>
+                        
+                        <!-- Book Anchor Tag -->
+                        <a 
+                            href="javascript:void(0);" 
+                            class="btn btn-primary btn-edit-amenity" 
+                            onclick="bookAmenity('{{ amenity.id }}')">
+                            Book
+                        </a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // JavaScript to handle booking with the selected date
+    function bookAmenity(amenityId) {
+        const bookingDate = document.getElementById(`booking_date_${amenityId}`).value;
+        if (!bookingDate) {
+            alert("Please select a booking date before proceeding.");
+            return;
+        }
+        // Redirect to the booking endpoint with the selected date
+        window.location.href = `/bookAmenity/${amenityId}?booking_date=${bookingDate}`;
+    }
+</script>
+{% endblock 'main' %}

@@ -1,0 +1,73 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2">
+    <div class="container admin-usermanage-container">
+        <h1 class="admin-usermanage-title">Maintenance Amount Dashboard</h1>
+        
+        <!-- Success/Error messages -->
+        {% if successmsg %}
+        <div id="success" class="alert alert-success admin-usermanage-success" role="alert">
+            {{ successmsg }}
+        </div>
+        {% elif errormsg %}
+        <div id="error" class="alert alert-danger admin-usermanage-danger" role="alert">
+            {{ errormsg }}
+        </div>
+        {% endif %}
+
+
+
+        <form action="" method="GET" class="d-flex align-items-center mt-2 dash-filter-form">
+            <div class="form-group me-3">
+                <label for="search-order-id" class="form-label">Flat No.</label>
+                <input type="text" id="search-order-id" name="order_id" placeholder="Filter by Flat no." class="form-control">
+            </div>
+            <div class="form-group me-3">
+                <label for="search-city" class="form-label">Owner Name</label>
+                <input type="text" id="search-city" name="city" placeholder="Filter by Owner Name" class="form-control">
+            </div>
+            <div class="form-group me-3">
+                <label for="start-date" class="form-label">Start Date</label>
+                <input type="date" id="start-date" name="start_date" class="form-control">
+            </div>
+            <div class="form-group me-3">
+                <label for="end-date" class="form-label">End Date</label>
+                <input type="date" id="end-date" name="end_date" class="form-control">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary mt-2">Search</button>
+            </div>
+        </form>
+
+        <!-- User Table -->
+        <table class="table admin-usermanage-table">
+            <thead>
+                <tr>
+                    <th scope="col">Flat No.</th>
+                    <th scope="col">Owner Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Payment Date</th>
+                    <th scope="col">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in data %}
+                <tr>
+                    <td>{{i.uid.flat.flat_no}}</td>
+                    <td>{{ i.uid.first_name }}</td>
+                    <td>{{ i.uid.email }}</td>
+                    <td></td>
+                    <td>{{ i.payment_date }}</td>
+                    <td>{{ i.amount }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Add User Button -->
+        <!-- <a href="" class="btn btn-primary admin-usermanage-add-btn">Add New User</a> -->
+    </div>
+</div>
+{% endblock 'main' %}

@@ -11,13 +11,21 @@ class Flat(models.Model):
     flat_no = models.CharField(max_length=10, null=True, blank=True)
 
 
-# # Maintenance Payment Model
-# class MaintenancePayment(models.Model):
-#     uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
-#     month = models.DateField()  # The month the payment corresponds to
-#     payment_date = models.DateField()  # The actual payment date
-#     amount= models.DecimalField(max_digits=10, decimal_places=2)  # Total amount paid
-#     penalty = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Penalty applied, if any
+# Maintenance Payment Model
+class MaintenancePayment(models.Model):
+    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    payment_date = models.DateField()  
+    amount= models.DecimalField(max_digits=10, decimal_places=2)  
+    
+
+# Booking Amenity Model
+class BookingAmenity(models.Model):
+    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    aid = models.ForeignKey('Amenity', on_delete=models.CASCADE, db_column='aid')
+    booking_date = models.DateField()  
+    amount= models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField()
+
 
 
 # class ComplaintFeedback(models.Model):
@@ -65,10 +73,11 @@ class Amenity(models.Model):
 
 # Poll Model
 class Poll(models.Model):
-    question = models.CharField(max_length=200)
-    option_1 = models.CharField(max_length=100)
-    option_2 = models.CharField(max_length=100)
-    votes = models.PositiveIntegerField(default=0)
+    question = models.CharField(max_length=255)
+    option_1 = models.CharField(max_length=255)
+    option_2 = models.CharField(max_length=255)
+    votes_1 = models.IntegerField(default=0)
+    votes_2 = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.question

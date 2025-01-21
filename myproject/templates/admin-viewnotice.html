@@ -1,11 +1,11 @@
 {% extends 'admin-base.html' %} {% load static %} {% block 'main' %}
 <div class="col-md-10 col-sm-8 mb-2">
   <div class="container admin-notice-view-container">
-    <h1 class="admin-notice-view-title">View Notices</h1>
-    <!-- Add Notice Button -->
-    <a href="/admin-addnotice" class="btn btn-primary admin-notice-add-btn">
-      <i class="bi bi-plus-circle"></i>  Add New Notice
-    </a>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <h1 class="admin-usermanage-title">View Notices</h1>
+      <a href="/admin-addnotice" class="btn btn-primary admin-amenity-view-add-btn"><i class="bi bi-plus-circle"></i> Add New Notice</a>
+    </div>
 
     <!-- Success/Error messages -->
     {% if successmsg %}
@@ -48,7 +48,7 @@
                 </small>
               </p>
               <div class="admin-notice-actions">
-                <a href="" class="btn btn-warning admin-notice-edit-btn"
+                <a href="/admin-edit-notice/{{notice.id}}" class="btn btn-warning admin-notice-edit-btn"
                   >Edit</a
                 >
                 <a

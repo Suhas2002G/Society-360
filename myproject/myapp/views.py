@@ -1,12 +1,16 @@
-from django.shortcuts import render,redirect,HttpResponse
+from datetime import date
+import os
+from pyexpat.errors import messages
+from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
-from myapp.models import Notice,Flat,Amenity,Poll
+from myapp.models import Notice,Flat,Amenity,Poll, MaintenancePayment, BookingAmenity
 from django.utils import timezone
 from django.db.models import Q  
 import razorpay
 from django.core.mail import send_mail 
+from django.db.models import Sum
 
 
 # index page
@@ -98,6 +102,255 @@ def owner_view_poll(request):
     return render(request, 'owner-view-poll.html', context)
 
 
+def vote(request, vid, op):
+    # Fetch the poll using get_object_or_404 to handle invalid poll IDs
+    poll = get_object_or_404(Poll, id=vid)
+    
+    # Update the vote count for the selected option
+    if op == '1':    
+        poll.votes_1 += 1
+    elif op == '2':  
+        poll.votes_2 += 1
+    
+    poll.save()  
+
+    # Calculate percentages after voting
+    total_votes = poll.votes_1 + poll.votes_2
+    if total_votes > 0:
+        percentage_1 = (poll.votes_1 / total_votes) * 100
+        percentage_2 = (poll.votes_2 / total_votes) * 100
+    else:
+        percentage_1 = 0
+        percentage_2 = 0
+
+    # Redirect the user to the polls listing page after voting
+    return redirect('/owner-view-poll')   
+        
+
+
+
+
+def owner_book_amenity(request):
+    context={}
+    try:
+        amenities = Amenity.objects.all()  # Fetching all amenities
+        context['amenities'] = amenities
+    except Exception :
+        context['errormsg'] = "No Amenities Found "
+
+    return render(request, 'owner-bookamenity.html', context)
+
+
+# def bookAmenity(request,aid):
+#     b_date = request.GET['booking_date']
+#     print(b_date)
+
+#     a=Amenity.objects.get(id=aid)
+#     amount = a.rent
+#     # print(amount)
+#     # return HttpResponse('fetched')
+#     context={}
+#     RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+#     RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+
+#     amt = amount
+#     client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
+
+#     amt = int(float(amt) * 100) # to convert amount to paise 
+
+#     data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
+#     payment = client.order.create(data=data)
+#     context['payment']=payment
+
+
+#     # Insert a record in the MaintenancePayment model
+#     booking_data = {
+#         'uid': request.user, 
+#         'booking_date': b_date,  # Current date of payment
+#         'payment_date': timezone.now().date(),  # Current date of payment
+#         'amount': amount, 
+#         'aid' : a
+#         }
+        
+#     # Create and save the MaintenancePayment record
+#     BookingAmenity.objects.create(**booking_data)
+        
+#     return render(request, 'amenitypay.html', context)
+
+
+
+def bookAmenity(request, aid):
+    if request.method == 'GET':
+        b_date = request.GET.get('booking_date')  # Get the booking date from query parameters
+        context = {}
+
+        # Check if the amenity is already booked on the given date
+        existing_booking = BookingAmenity.objects.filter(aid=aid, booking_date=b_date).exists()
+
+        if existing_booking:
+            context['errormsg'] = "Amenity is booked by someone for the selected date."
+            return render(request, 'owner-bookamenity.html', context)
+        else:
+            # Proceed with booking if not already booked
+            a = Amenity.objects.get(id=aid)
+            amount = a.rent
+
+            RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+            RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+
+            amt = int(float(amount) * 100)  # Convert to paise
+            client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
+
+            # Create payment order
+            data = {"amount": amt, "currency": "INR", "receipt": f"order_rcptid_{aid}"}
+            payment = client.order.create(data=data)
+            context['payment'] = payment
+
+            # Insert a record into the BookingAmenity model
+            booking_data = {
+                'uid': request.user,
+                'booking_date': b_date,
+                'payment_date': timezone.now().date(),
+                'amount': amount,
+                'aid': a,
+            }
+
+            BookingAmenity.objects.create(**booking_data)
+
+            context['success_message'] = "Amenity booked successfully!"
+            return render(request, 'amenitypay.html', context)
+
+    return HttpResponse("Invalid request method.", status=405)
+
+
+
+
+def amenitypaymentsuccess(request):
+    sub='Society360 Amenity Booking Confirmation'
+    msg="We have received your booking for amenity from your side. Thank you..! "
+    frm=os.getenv('EMAIL_HOST_USER')
+
+    u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
+    to=u[0].email
+
+    send_mail(
+        sub,
+        msg,
+        frm,
+        [to],               #list beacause we can send mail to multiple emails-ids
+        fail_silently=False
+    )
+
+    return render(request, 'paymentsuccess.html')
+
+
+
+
+
+
+def owner_maintenance(request):
+    context = {}
+    user = request.user  # Get the current logged-in user
+    context['user'] = user
+
+    # Get the current month (using year and month for comparison)
+    current_month = timezone.now().date().replace(day=1)
+    current_month_str = current_month.strftime('%Y-%m')  # Get year-month in 'YYYY-MM' format
+
+    # Check if the user has already paid for the current month
+    payment_exists = MaintenancePayment.objects.filter(uid=user, payment_date__month=current_month.month, payment_date__year=current_month.year).exists()
+
+    if payment_exists:
+        context['already_paid'] = "You have already paid your maintenance for this month."
+        context['payment_status'] = 'paid'  # To disable Pay Now button in the template
+    else:
+        context['amount'] = 1000  # Amount to be paid
+
+    # Fetch previous payment history (optional)
+    previous_payments = MaintenancePayment.objects.filter(uid=user).order_by('-payment_date')
+    context['previous_payments'] = previous_payments
+
+    return render(request, 'owner-maintenance.html', context)
+
+
+
+def makepayment(request):
+    amount = 1000
+    context={}
+    RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+    RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+
+    # print(RAZORPAY_API_KEY)
+    # print(RAZORPAY_API_PASS)
+
+    amt = amount
+    client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
+
+    amt = int(float(amt) * 100) # to convert amount to paise 
+
+    data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
+    payment = client.order.create(data=data)
+    context['payment']=payment
+    
+    return render(request, 'pay.html', context)
+    
+
+
+# # Payment-Success page after paying Maintenance & Email Integration
+def paymentsuccess(request):
+    
+    sub='Society360 Monthly Maintenance'
+    msg="We have received monthly maintenance from your side. Thank you..! "
+    frm=os.getenv('EMAIL_HOST_USER')
+
+    u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
+    to=u[0].email
+
+    send_mail(
+        sub,
+        msg,
+        frm,
+        [to],               #list beacause we can send mail to multiple emails-ids
+        fail_silently=False
+    )
+
+    # Insert a record in the MaintenancePayment model
+    payment_data = {
+        'uid': request.user,  # Assuming the user who made the payment
+        # 'month': timezone.now().date(),  # Current month  
+        'payment_date': timezone.now().date(),  # Current date of payment
+        'amount': 1000,  # Amount paid (pass as parameter from Razorpay response)
+    }
+    
+    # Create and save the MaintenancePayment record
+    MaintenancePayment.objects.create(**payment_data)
+
+
+
+    return render(request, 'paymentsuccess.html')
+
+
+
+
+
+
+# Owner can Raise Complaint
+def owner_raise_complaint(request):
+    if request.method == 'GET':
+        return render(request, 'owner-raise-complaint.html')
+    else:
+        pass
+
+
+
+
+
+
+
+
+
+
+
 
 
 #~~~~~~~~~~~~~~~~~~~~~  ADMIN PART  ~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -135,11 +388,17 @@ def admin_dashboard(request):
 
         ownerCount=Flat.objects.count()
         noticeCount = Notice.objects.count()
-        # complaintCount = Complaint.objects.count()
+
+        mamount = 0
+        m=MaintenancePayment.objects.all()
+        for i in m:
+            mamount += i.amount
+        
         context={
             'ocount': ownerCount,
             'ncount' : noticeCount,
-            'current_date' : current_date
+            'current_date' : current_date,
+            'mamount' : mamount
             # 'compCount':complaintCount,
         }
         return render(request, 'admin-dashboard.html', context)
@@ -192,6 +451,14 @@ def admin_usermanage(request):
     
     context['users_flats'] = users_flats
     return render(request, 'admin-usermanage.html', context)
+
+
+
+def admin_maintenance(request):
+    context={}
+    m = MaintenancePayment.objects.all().order_by('-payment_date')
+    context['data'] = m
+    return render(request, 'admin-maintenance.html', context)
 
 
 
@@ -269,6 +536,14 @@ def admin_delete_notice(request,nid):
 
 
 
+def admin_edit_notice(request,nid):
+    context = {}
+    notice = Notice.objects.filter(id=nid)
+    context['notices'] = notice
+    return render(request, 'admin-edit-notice.html', context)
+
+
+
 # Admin Add poll
 def admin_add_poll(request):
     context={}
@@ -295,3 +570,9 @@ def admin_view_poll(request):
     p=Poll.objects.all().order_by('-created_at')
     context['data']=p
     return render(request, 'admin-view-poll.html', context)
+
+
+def admin_delete_poll(request,pid):
+    poll = Poll.objects.filter(id=pid)
+    poll.delete()
+    return redirect('/admin-view-poll')

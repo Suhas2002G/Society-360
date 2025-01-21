@@ -3,8 +3,12 @@
 {% block 'main' %}
 <div class="col-md-10 col-sm-8 mb-2">
     <div class="container admin-amenity-view-container">
-        <h1 class="admin-amenity-view-title">View Amenities</h1>
         
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <h1 class="admin-usermanage-title">View Amenities</h1>
+            <a href="/admin-add-amenity" class="btn btn-primary admin-amenity-view-add-btn"><i class="bi bi-plus-circle"></i> Add New Amenity</a>
+        </div>
+
         <!-- Success/Error messages -->
         {% if successmsg %}
         <div id="success" class="alert alert-success admin-amenity-view-success" role="alert">
@@ -34,8 +38,7 @@
             {% endfor %}
         </div>
         
-        <!-- Add Amenity Button -->
-        <a href="/admin-add-amenity" class="btn btn-primary admin-amenity-view-add-btn"><i class="bi bi-plus-circle"></i>  Add New Amenity</a>
+        
     </div>
 </div>
 {% endblock 'main' %}
