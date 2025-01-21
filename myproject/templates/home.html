@@ -1,6 +1,61 @@
 {% include 'header.html' %}
 {% load static %}
 
+ <!-- Hero Section -->
+ <section class="home-hero">
+    <div class="home-hero-content">
+        <h1 class="home-hero-title">Welcome to Society 360</h1>
+        <p class="home-hero-description">A modern solution to managing your society with ease and efficiency.</p>
+        <a href="/owner-login" class="home-cta-button" style="text-decoration: none;">Get Started</a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="home-features">
+    <div class="home-features-container">
+        <div class="home-feature">
+            <img src="{% static 'images/feature1.svg' %}" alt="Feature 1" class="home-feature-icon">
+            <h3 class="home-feature-title">Smart Management</h3>
+            <p class="home-feature-description">Easily manage your society with advanced tools to track payments, notices, and events.</p>
+        </div>
+        <div class="home-feature">
+            <img src="{% static 'images/feature2.svg' %}" alt="Feature 2" class="home-feature-icon">
+            <h3 class="home-feature-title">Online Payments</h3>
+            <p class="home-feature-description">Make online payments for maintenance fees and other services directly from the portal.</p>
+        </div>
+        <div class="home-feature">
+            <img src="{% static 'images/feature3.svg' %}" alt="Feature 3" class="home-feature-icon">
+            <h3 class="home-feature-title">Community Building</h3>
+            <p class="home-feature-description">Foster a sense of community with discussion boards, events, and easy communication among residents.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="home-testimonials">
+    <div class="home-testimonial-container">
+        <h2 class="home-testimonial-title">What Our Residents Say</h2>
+        <div class="home-testimonial">
+            <img src="{% static 'images/user1.jpg' %}" alt="User 1" class="home-testimonial-avatar">
+            <p class="home-testimonial-text">"Society 360 has transformed the way we manage our society. Payments, notices, and communication have never been easier!"</p>
+            <h4 class="home-testimonial-name">John Doe</h4>
+        </div>
+        <div class="home-testimonial">
+            <img src="{% static 'images/user2.jpg' %}" alt="User 2" class="home-testimonial-avatar">
+            <p class="home-testimonial-text">"I can now access everything I need to know about the society at my fingertips. Great experience!"</p>
+            <h4 class="home-testimonial-name">Jane Smith</h4>
+        </div>
+    </div>
+</section>
+
+<!-- Call-to-Action Section -->
+<section class="home-cta">
+    <div class="home-cta-content">
+        <h2 class="home-cta-title">Join the Future of Society Management</h2>
+        <p class="home-cta-description">Sign up today to start managing your society with ease and modern technology.</p>
+        <a href="/owner-login" class="home-cta-button">Get Started</a>
+    </div>
+</section>
 
 
 

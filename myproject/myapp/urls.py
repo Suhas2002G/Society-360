@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout', views.owner_logout),
     path('owner-home', views.owner_home),
     path('owner-notice', views.owner_notice),
+    path('owner-view-poll', views.owner_view_poll),
     # path('owner-book-amenity', views.owner_book_amenity),
     # path('owner-maintenance', views.owner_maintenance),
     # path('owner-raise-complaint', views.owner_raise_complaint),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('admin-delete-amenity/<aid>', views.admin_delete_amenity),
     path('admin-viewnotice', views.admin_view_notice),
     path('admin-add-poll', views.admin_add_poll),
+    path('admin-view-poll', views.admin_view_poll),
     
     
 

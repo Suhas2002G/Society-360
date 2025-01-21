@@ -7,9 +7,15 @@
 
         <!-- Success/Error messages -->
         {% if successmsg %}
-        <div id="success" class="alert alert-success admin-amenity-success" role="alert">
+        <div id="success" class="alert alert-success admin-amenity-success" role="alert" data-redirect-url="/admin-view-amenity">
             {{ successmsg }}
         </div>
+        <script>
+            // Redirect after 5 seconds
+            setTimeout(function() {
+                window.location.href = document.getElementById("success").getAttribute("data-redirect-url");
+            }, 3000);
+        </script>
         {% elif errormsg %}
         <div id="error" class="alert alert-danger admin-amenity-danger" role="alert">
             {{ errormsg }}

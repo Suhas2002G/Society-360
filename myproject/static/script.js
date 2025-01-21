@@ -5,3 +5,11 @@ document.querySelectorAll('.nav-link').forEach(link => {
       this.classList.add('active');
     });
   });
+
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function() {
+      document.querySelectorAll('.s-nav-link').forEach(link => link.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });

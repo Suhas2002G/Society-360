@@ -91,6 +91,11 @@ def owner_notice(request):
 
 
 
+def owner_view_poll(request):
+    context={}
+    p=Poll.objects.all().order_by('-created_at')
+    context['data']=p
+    return render(request, 'owner-view-poll.html', context)
 
 
 
@@ -284,3 +289,9 @@ def admin_add_poll(request):
 
         
 
+# Admin View Poll 
+def admin_view_poll(request):
+    context={}
+    p=Poll.objects.all().order_by('-created_at')
+    context['data']=p
+    return render(request, 'admin-view-poll.html', context)

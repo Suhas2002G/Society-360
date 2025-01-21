@@ -37,7 +37,7 @@ body{
 }
 .navbar-nav .nav-link {
   color: white !important;
-  margin-left: 40px;
+  margin-left: 60px;
   
 }
 .dropdown{
@@ -49,6 +49,9 @@ body{
 .navbar-nav .nav-link:hover {
   color: #5D0E41 !important;
   transition: transform 0.5s ease;
+  background-color: #fff;
+  border-radius: 20px;
+  transition: 0.5s ease-in-out;
 }
 .navbar-toggler-icon {
   background-color: #ffffff;
@@ -73,6 +76,168 @@ footer .social-icons a {
   margin-right: 15px;
 }
 /* footer.html ends here  */
+
+
+
+
+/* home.html starts here  */
+/* Hero Section */
+.home-hero {
+  /* background: url('https://totalityre.com/media/images/blog/the-reasons-for-using-housing-society-management-system-app.jpg') no-repeat center center/cover; */
+  background: url('https://img.freepik.com/free-photo/analog-landscape-city-with-buildings_23-2149661456.jpg?t=st=1737432926~exp=1737436526~hmac=d50a81ac55534eb3d8d430e05f4ad5d069d90449af552b8878d1a57d2e46d1c6&w=1800') no-repeat center center/cover;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.home-hero-content {
+  margin-top: -20px;
+  max-width: 650px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+.home-hero-title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.home-hero-description {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+.home-cta-button {
+  padding: 10px 20px;
+  background-color: #48CFCB;
+  color: #fff;
+  border-radius: 30px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.home-cta-button:hover {
+  background-color: #229799;
+}
+
+/* Features Section */
+.home-features {
+  background-color: #fff;
+  padding: 60px 0;
+}
+
+.home-features-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding: 0 20px;
+}
+
+.home-feature {
+  max-width: 300px;
+  text-align: center;
+}
+
+.home-feature-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+.home-feature-title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.home-feature-description {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Testimonials Section */
+.home-testimonials {
+  background-color: #f7f7f7;
+  padding: 60px 0;
+}
+
+.home-testimonial-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-testimonial-title {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+.home-testimonial {
+  display: inline-block;
+  max-width: 400px;
+  text-align: left;
+  margin: 0 20px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.home-testimonial-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.home-testimonial-text {
+  font-size: 1rem;
+  color: #333;
+}
+
+.home-testimonial-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Call to Action Section */
+.home-cta {
+  background-color: #48CFCB;
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.home-cta-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.home-cta-description {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+}
+
+.home-cta-button {
+  padding: 10px 30px;
+  background-color: #229799;
+  color: white;
+  font-weight: bold;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease;
+}
+
+.home-cta-button:hover {
+  background-color: #48CFCB;
+}
+/* home.html ends here  */
+
 
 
 
@@ -293,15 +458,17 @@ footer .social-icons a {
 
 /* sidebar.html starts here  */
 .owner-sidebar {
-  background-color: #5D0E41;
+  background-color: #b4d4fe;
   padding: 20px;
-  border-radius: 10px;
+  /* border-radius: 10px; */
+  margin-left: -13px;
   min-height: 100vh;
+  margin-bottom: -10px;
 }
 
 /* Styling for each nav link */
-.owner-sidebar .nav-link {
-  color: #fff;
+.owner-sidebar .s-nav-link {
+  color: #0a2260;
   font-size: 1.1rem;
   font-weight: 500;
   padding: 12px 15px;
@@ -312,21 +479,21 @@ footer .social-icons a {
 }
 
 /* Hover effect for nav links */
-.owner-sidebar .nav-link:hover {
+.owner-sidebar .s-nav-link:hover {
   background-color: #FF204E;
 }
 
 /* Active link with different background */
-.owner-sidebar .nav-link.active {
-  background-color: #A0153E;
+/* .owner-sidebar .nav-link.active {
+  background-color: #FF204E;
   color: #FFF;
-}
+} */
 
 /* Making sure the active link doesn't change text color */
-.owner-sidebar .nav-link.active:hover {
+/* .owner-sidebar .s-nav-link.active:hover {
   background-color: #A0153E;
   color: #FFF;
-}
+} */
 
 @media (max-width: 768px) {
   .owner-sidebar {
@@ -347,6 +514,7 @@ footer .social-icons a {
   margin: 20px auto;
   max-width: 1200px;
   padding: 0 15px;
+  
 }
 
 /* Header Section */
@@ -995,3 +1163,67 @@ footer .social-icons a {
 
 /* admin-add-poll.html endts here  */
 
+
+
+
+/* admin-view-poll.html starts here  */
+.view-poll-container {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.view-poll-question p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  /* text-align: center; */
+  margin-bottom: 20px;
+}
+
+.view-poll-bar {
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.view-poll-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.view-poll-percentage {
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+}
+
+.view-poll-vote-btn {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.view-poll-vote-btn:hover {
+  background-color: #0056b3;
+}
+
+.view-poll-delete-btn {
+  padding: 5px 10px;
+  background-color: #f93f3f;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.view-poll-delete-btn:hover {
+  background-color: #cd1818;
+}
+/* admin-view-poll.html ends here  */
