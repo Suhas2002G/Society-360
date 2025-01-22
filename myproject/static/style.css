@@ -95,9 +95,9 @@ footer .social-icons a {
 
 .home-hero-content {
   margin-top: -20px;
-  max-width: 650px;
+  /* max-width: 650px; */
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* background-color: rgba(0, 0, 0, 0.5); */
   border-radius: 10px;
 }
 
@@ -118,6 +118,7 @@ footer .social-icons a {
   border-radius: 30px;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  text-decoration: none;
 }
 
 .home-cta-button:hover {
@@ -144,9 +145,10 @@ footer .social-icons a {
 }
 
 .home-feature-icon {
-  width: 80px;
-  height: 80px;
+  width: 180px;
+  height: 180px;
   margin-bottom: 20px;
+  border-radius: 20px
 }
 
 .home-feature-title {
@@ -185,6 +187,7 @@ footer .social-icons a {
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .home-testimonial-avatar {
@@ -207,8 +210,8 @@ footer .social-icons a {
 
 /* Call to Action Section */
 .home-cta {
-  background-color: #48CFCB;
-  color: white;
+  background-color: #eaeaff;
+  color: #0d0e13;
   padding: 60px 0;
   text-align: center;
 }
@@ -480,7 +483,8 @@ footer .social-icons a {
 
 /* Hover effect for nav links */
 .owner-sidebar .s-nav-link:hover {
-  background-color: #FF204E;
+  background-color: #0a2260;
+  color: white;
 }
 
 /* Active link with different background */
@@ -1476,3 +1480,9 @@ form.d-flex .btn-primary:hover {
 }
 
 /* Admin Booking Page ends*/
+
+
+
+
+
+

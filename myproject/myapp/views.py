@@ -356,10 +356,9 @@ def admin_login(request):
 @login_required(login_url='/admin-login')
 def admin_dashboard(request):
     context={}
-    if not request.user.is_authenticated:
-        return redirect('/adminlogin')
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
     else:
-        
         current_datetime = timezone.now()  # Get current date (date and time)
         current_date = current_datetime.date()  # Get only the current date (without time)
 
@@ -391,10 +390,6 @@ def admin_add_notice(request):
     if request.method == 'GET':
         return render(request, 'admin-addnotice.html', context)
     else:
-        # title = request.POST.get('title', '').strip()
-        # cat = request.POST.get('category', '').strip()
-        # des = request.POST.get('description', '').strip()
-        # priority = request.POST.get('priority', '').strip()
         title = request.POST['title']
         cat = request.POST['category']
         des = request.POST['description']
@@ -419,6 +414,9 @@ def admin_add_notice(request):
 
 @login_required(login_url='/admin-login')
 def admin_usermanage(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     users = User.objects.filter(is_staff=False) # Fetching users who are not staff (regular users)
     print(users)
@@ -437,6 +435,9 @@ def admin_usermanage(request):
 
 @login_required(login_url='/admin-login')
 def admin_maintenance(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context={}
     m = MaintenancePayment.objects.all().order_by('-payment_date')
     context['data'] = m
@@ -447,6 +448,9 @@ def admin_maintenance(request):
 # Admin Add New Amenity
 @login_required(login_url='/admin-login')
 def admin_add_amenity(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     if request.method == 'POST':
         # Fetching data from the form
@@ -479,6 +483,9 @@ def admin_add_amenity(request):
 # Admin View Amenity
 @login_required(login_url='/admin-login')
 def admin_view_amenity(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     try:
         amenities = Amenity.objects.all()  # Fetching all amenities
@@ -494,6 +501,9 @@ def admin_view_amenity(request):
 # Delete particular Amenity
 @login_required(login_url='/admin-login')
 def admin_delete_amenity(request,aid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     amenity = Amenity.objects.filter(id=aid)
     amenity.delete()
@@ -505,6 +515,9 @@ def admin_delete_amenity(request,aid):
 # Admin View Notice
 @login_required(login_url='/admin-login')
 def admin_view_notice(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     try:
         # Fetching all notices
@@ -521,6 +534,9 @@ def admin_view_notice(request):
 # Admin can delete particular Notice
 @login_required(login_url='/admin-login')
 def admin_delete_notice(request,nid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     notice = Notice.objects.filter(id=nid)
     # print(notice)
@@ -533,6 +549,9 @@ def admin_delete_notice(request,nid):
 # Admin can edit particular Notice
 @login_required(login_url='/admin-login')
 def admin_edit_notice(request,nid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     notice = Notice.objects.filter(id=nid)
     context['notices'] = notice
@@ -543,6 +562,9 @@ def admin_edit_notice(request,nid):
 # Admin can see all bookings
 @login_required(login_url='/admin-login')
 def admin_booking(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context={}
     b = BookingAmenity.objects.all()
     context['data']=b
@@ -553,8 +575,10 @@ def admin_booking(request):
 
 # Admin Poll and Surveys
 @login_required(login_url='/admin-login')
-# Admin Add poll
 def admin_add_poll(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context={}
     if request.method=='GET':
         return render(request,'admin-add-poll.html')
@@ -576,6 +600,9 @@ def admin_add_poll(request):
 # Admin View Poll 
 @login_required(login_url='/admin-login')
 def admin_view_poll(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context={}
     p=Poll.objects.all().order_by('-created_at')
     context['data']=p
@@ -585,6 +612,9 @@ def admin_view_poll(request):
 # Admin can delete particular Poll
 @login_required(login_url='/admin-login')
 def admin_delete_poll(request,pid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     poll = Poll.objects.filter(id=pid)
     poll.delete()
     return redirect('/admin-view-poll')
