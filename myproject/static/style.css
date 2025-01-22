@@ -694,6 +694,62 @@ footer .social-icons a {
 
 
 
+/* owner-raise-complaint.html starts here  */
+.raise-complaint-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.raise-complaint-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.raise-complaint-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.raise-complaint-input,
+.raise-complaint-select,
+.raise-complaint-textarea {
+  font-size: 0.95rem;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.raise-complaint-input:focus,
+.raise-complaint-select:focus,
+.raise-complaint-textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
+.raise-complaint-submit {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.raise-complaint-submit:hover {
+  background-color: #0056b3;
+}
+/* owner-raise-complaint.html ends here  */
+
 
 
 
