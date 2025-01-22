@@ -28,17 +28,14 @@ class BookingAmenity(models.Model):
 
 
 
-# class ComplaintFeedback(models.Model):
-#     CATEGORY_CHOICES = [
-#         ('plumbing', 'Plumbing'),
-#         ('security', 'Security'),
-#         ('cleanliness', 'Cleanliness'),
-#     ]
-#     uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
-#     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-#     description = models.TextField()
-#     status = models.CharField(max_length=20, default='Pending')  # Pending, In Progress, Resolved
-#     created_at = models.DateTimeField(auto_now_add=True)
+class Complaint(models.Model):
+    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    title = models.CharField(max_length=200)
+    category = models.CharField(max_length=200)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 
 
 

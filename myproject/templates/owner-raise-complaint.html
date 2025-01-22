@@ -5,9 +5,9 @@
 <div class="container raise-complaint-container my-5">
     <h3 class="raise-complaint-title text-center mb-4">Raise a Complaint</h3>
     
-    {% if successmsg %}
-    <div id="success" class="alert alert-success raise-complaint-success" role="alert" data-redirect-url="/dashboard">
-        {{ successmsg }}
+    {% if success %}
+    <div id="success" class="alert alert-success raise-complaint-success" role="alert" data-redirect-url="/owner-home">
+        {{ success }}
     </div>
     <script>
         // Redirect after 3 seconds
@@ -16,21 +16,27 @@
         }, 3000);
     </script>
     {% elif errormsg %}
-    <div class="alert alert-danger raise-complaint-error" role="alert">
+    <div class="alert alert-danger raise-complaint-error" role="alert" id="error" data-redirect-url="/owner-raise-complaint">
         {{ errormsg }}
     </div>
+    <script>
+        // Redirect after 3 seconds
+        setTimeout(function() {
+            window.location.href = document.getElementById("error").getAttribute("data-redirect-url");
+        }, 3000);
+    </script>
     {% endif %}
     
     <form class="raise-complaint-form" method="POST" action="">
         {% csrf_token %}
         <div class="mb-4 raise-complaint-field">
             <label for="complaintTitle" class="form-label raise-complaint-label">Complaint Title</label>
-            <input type="text" class="form-control raise-complaint-input" id="complaintTitle" name="title" placeholder="Enter the complaint title" required>
+            <input type="text" class="form-control raise-complaint-input" id="complaintTitle" name="title" placeholder="Enter the complaint title" >
         </div>
         
         <div class="mb-4 raise-complaint-field">
             <label for="complaintCategory" class="form-label raise-complaint-label">Category</label>
-            <select class="form-select raise-complaint-select" id="complaintCategory" name="category" required>
+            <select class="form-select raise-complaint-select" id="complaintCategory" name="category" >
                 <option value="" disabled selected>Select category</option>
                 <option value="Maintenance">Maintenance</option>
                 <option value="Security">Water Supply</option>
@@ -42,17 +48,8 @@
         
         <div class="mb-4 raise-complaint-field">
             <label for="complaintDescription" class="form-label raise-complaint-label">Description</label>
-            <textarea class="form-control raise-complaint-textarea" id="complaintDescription" name="description" rows="5" placeholder="Enter the complaint description" required></textarea>
+            <textarea class="form-control raise-complaint-textarea" id="complaintDescription" name="description" rows="5" placeholder="Enter the complaint description" ></textarea>
         </div>  
-        <!-- <div class="mb-4 raise-complaint-field">
-            <label for="ownerContact" class="form-label raise-complaint-label">Your Contact Number</label>
-            <input type="tel" class="form-control raise-complaint-input" id="ownerContact" name="contact" placeholder="Enter your contact number" pattern="[0-9]{10}" required>
-        </div>
-        
-        <div class="mb-4 raise-complaint-field">
-            <label for="ownerEmail" class="form-label raise-complaint-label">Your Email</label>
-            <input type="email" class="form-control raise-complaint-input" id="ownerEmail" name="email" placeholder="Enter your email address" required>
-        </div> -->
         
         <button type="submit" class="btn btn-primary raise-complaint-submit">Submit Complaint</button>
     </form>

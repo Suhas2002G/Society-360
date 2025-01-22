@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
-from myapp.models import Notice,Flat,Amenity,Poll, MaintenancePayment, BookingAmenity
+from myapp.models import Notice, Flat, Amenity, Poll, MaintenancePayment, BookingAmenity, Complaint
 from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
@@ -312,11 +312,30 @@ def paymentsuccess(request):
 # Owner can Raise Complaint
 @login_required(login_url='/owner-login')
 def owner_raise_complaint(request):
+    context={}
     if request.method == 'GET':
         return render(request, 'owner-raise-complaint.html')
     else:
-        pass
+        t=request.POST['title']
+        cat=request.POST['category']
+        desc=request.POST['description']
 
+        print(t)
+        print(cat)
+        print(desc)
+        u = request.user
+
+        if t=='' or cat=='' or desc=='' :
+            print('Please fill all the fields')
+            context['errormsg']='Please fill all the fields'
+        else:
+            try:
+                m=Complaint.objects.create(title=t,category=cat,description=desc,uid=u)
+                m.save()
+                context['success']='Complaint Raised Successfully...!'
+            except Exception:
+                context['errormsg']='Re-try Again'
+        return render(request,'owner-raise-complaint.html',context)
 
 
 
@@ -618,3 +637,15 @@ def admin_delete_poll(request,pid):
     poll = Poll.objects.filter(id=pid)
     poll.delete()
     return redirect('/admin-view-poll')
+
+
+
+@login_required(login_url='/admin-login')
+def admin_manage_complaint(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    context={}
+    c = Complaint.objects.all().order_by('-created_at')
+    context['data']=c 
+    return render(request, 'admin-manage-complaint.html', context)

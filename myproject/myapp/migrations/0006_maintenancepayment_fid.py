@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='maintenancepayment',
             name='fid',
-            field=models.ForeignKey(db_column='fid', default=0, on_delete=django.db.models.deletion.CASCADE, to='myapp.flat'),
+            field=models.ForeignKey(db_column='fid', default=1, on_delete=django.db.models.deletion.CASCADE, to='myapp.flat'),
         ),
     ]

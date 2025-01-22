@@ -696,12 +696,12 @@ footer .social-icons a {
 
 /* owner-raise-complaint.html starts here  */
 .raise-complaint-container {
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #f8f9ff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -736,7 +736,9 @@ footer .social-icons a {
 
 .raise-complaint-submit {
   font-size: 1rem;
+  margin-top: 10px;
   font-weight: 600;
+  width: 100%;
   padding: 10px 20px;
   background-color: #007bff;
   border: none;
