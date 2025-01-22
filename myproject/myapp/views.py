@@ -1,6 +1,3 @@
-from datetime import date
-import os
-from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
@@ -8,9 +5,11 @@ from django.contrib.auth import login,logout
 from myapp.models import Notice,Flat,Amenity,Poll, MaintenancePayment, BookingAmenity
 from django.utils import timezone
 from django.db.models import Q  
+from datetime import date
+import os
 import razorpay
 from django.core.mail import send_mail 
-from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
 
 # index page
@@ -78,7 +77,8 @@ def owner_logout(request):
 
 
 
-
+# Owner Home Page
+@login_required(login_url='/owner-login')
 def owner_home(request):
     context={}
 
@@ -87,6 +87,7 @@ def owner_home(request):
 
 
 # Notice Board for Owner
+@login_required(login_url='/owner-login')
 def owner_notice(request):
     context={}
     notices = Notice.objects.all().order_by('-created_at')
@@ -95,6 +96,8 @@ def owner_notice(request):
 
 
 
+# Owner view Poll and Surveys
+@login_required(login_url='/owner-login')
 def owner_view_poll(request):
     context={}
     p=Poll.objects.all().order_by('-created_at')
@@ -102,6 +105,9 @@ def owner_view_poll(request):
     return render(request, 'owner-view-poll.html', context)
 
 
+
+# Owner can Vote for Poll and Surveys
+@login_required(login_url='/owner-login')
 def vote(request, vid, op):
     # Fetch the poll using get_object_or_404 to handle invalid poll IDs
     poll = get_object_or_404(Poll, id=vid)
@@ -129,7 +135,8 @@ def vote(request, vid, op):
 
 
 
-
+# Owner View Book Amenity
+@login_required(login_url='/owner-login')
 def owner_book_amenity(request):
     context={}
     try:
@@ -141,44 +148,9 @@ def owner_book_amenity(request):
     return render(request, 'owner-bookamenity.html', context)
 
 
-# def bookAmenity(request,aid):
-#     b_date = request.GET['booking_date']
-#     print(b_date)
 
-#     a=Amenity.objects.get(id=aid)
-#     amount = a.rent
-#     # print(amount)
-#     # return HttpResponse('fetched')
-#     context={}
-#     RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
-#     RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
-
-#     amt = amount
-#     client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
-
-#     amt = int(float(amt) * 100) # to convert amount to paise 
-
-#     data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
-#     payment = client.order.create(data=data)
-#     context['payment']=payment
-
-
-#     # Insert a record in the MaintenancePayment model
-#     booking_data = {
-#         'uid': request.user, 
-#         'booking_date': b_date,  # Current date of payment
-#         'payment_date': timezone.now().date(),  # Current date of payment
-#         'amount': amount, 
-#         'aid' : a
-#         }
-        
-#     # Create and save the MaintenancePayment record
-#     BookingAmenity.objects.create(**booking_data)
-        
-#     return render(request, 'amenitypay.html', context)
-
-
-
+# Owner Booking Amenity
+@login_required(login_url='/owner-login')
 def bookAmenity(request, aid):
     if request.method == 'GET':
         b_date = request.GET.get('booking_date')  # Get the booking date from query parameters
@@ -224,7 +196,8 @@ def bookAmenity(request, aid):
 
 
 
-
+# Owner Amenity Payment Page
+@login_required(login_url='/owner-login')
 def amenitypaymentsuccess(request):
     sub='Society360 Amenity Booking Confirmation'
     msg="We have received your booking for amenity from your side. Thank you..! "
@@ -247,7 +220,8 @@ def amenitypaymentsuccess(request):
 
 
 
-
+# Owner Maintenance Payment
+@login_required(login_url='/owner-login')
 def owner_maintenance(request):
     context = {}
     user = request.user  # Get the current logged-in user
@@ -274,6 +248,9 @@ def owner_maintenance(request):
 
 
 
+
+# Owner Make Payment Page
+@login_required(login_url='/owner-login')
 def makepayment(request):
     amount = 1000
     context={}
@@ -297,8 +274,8 @@ def makepayment(request):
 
 
 # # Payment-Success page after paying Maintenance & Email Integration
+@login_required(login_url='/owner-login')
 def paymentsuccess(request):
-    
     sub='Society360 Monthly Maintenance'
     msg="We have received monthly maintenance from your side. Thank you..! "
     frm=os.getenv('EMAIL_HOST_USER')
@@ -325,8 +302,6 @@ def paymentsuccess(request):
     # Create and save the MaintenancePayment record
     MaintenancePayment.objects.create(**payment_data)
 
-
-
     return render(request, 'paymentsuccess.html')
 
 
@@ -335,6 +310,7 @@ def paymentsuccess(request):
 
 
 # Owner can Raise Complaint
+@login_required(login_url='/owner-login')
 def owner_raise_complaint(request):
     if request.method == 'GET':
         return render(request, 'owner-raise-complaint.html')
@@ -377,6 +353,7 @@ def admin_login(request):
 
 
 # Admin Dashboard
+@login_required(login_url='/admin-login')
 def admin_dashboard(request):
     context={}
     if not request.user.is_authenticated:
@@ -404,7 +381,12 @@ def admin_dashboard(request):
         return render(request, 'admin-dashboard.html', context)
 
 
+
+@login_required(login_url='/admin-login')
 def admin_add_notice(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
     context = {}
     if request.method == 'GET':
         return render(request, 'admin-addnotice.html', context)
@@ -435,7 +417,7 @@ def admin_add_notice(request):
 
 
 
-
+@login_required(login_url='/admin-login')
 def admin_usermanage(request):
     context = {}
     users = User.objects.filter(is_staff=False) # Fetching users who are not staff (regular users)
@@ -453,7 +435,7 @@ def admin_usermanage(request):
     return render(request, 'admin-usermanage.html', context)
 
 
-
+@login_required(login_url='/admin-login')
 def admin_maintenance(request):
     context={}
     m = MaintenancePayment.objects.all().order_by('-payment_date')
@@ -462,6 +444,8 @@ def admin_maintenance(request):
 
 
 
+# Admin Add New Amenity
+@login_required(login_url='/admin-login')
 def admin_add_amenity(request):
     context = {}
     if request.method == 'POST':
@@ -493,6 +477,7 @@ def admin_add_amenity(request):
 
 
 # Admin View Amenity
+@login_required(login_url='/admin-login')
 def admin_view_amenity(request):
     context = {}
     try:
@@ -504,15 +489,21 @@ def admin_view_amenity(request):
     return render(request, 'admin-viewAmenity.html', context)
 
 
+
+
 # Delete particular Amenity
+@login_required(login_url='/admin-login')
 def admin_delete_amenity(request,aid):
     context = {}
     amenity = Amenity.objects.filter(id=aid)
     amenity.delete()
     return redirect('/admin-view-amenity')
-    
+
+
+
 
 # Admin View Notice
+@login_required(login_url='/admin-login')
 def admin_view_notice(request):
     context = {}
     try:
@@ -526,6 +517,9 @@ def admin_view_notice(request):
 
 
 
+
+# Admin can delete particular Notice
+@login_required(login_url='/admin-login')
 def admin_delete_notice(request,nid):
     context = {}
     notice = Notice.objects.filter(id=nid)
@@ -536,6 +530,8 @@ def admin_delete_notice(request,nid):
 
 
 
+# Admin can edit particular Notice
+@login_required(login_url='/admin-login')
 def admin_edit_notice(request,nid):
     context = {}
     notice = Notice.objects.filter(id=nid)
@@ -544,6 +540,8 @@ def admin_edit_notice(request,nid):
 
 
 
+# Admin can see all bookings
+@login_required(login_url='/admin-login')
 def admin_booking(request):
     context={}
     b = BookingAmenity.objects.all()
@@ -553,7 +551,8 @@ def admin_booking(request):
 
 
 
-
+# Admin Poll and Surveys
+@login_required(login_url='/admin-login')
 # Admin Add poll
 def admin_add_poll(request):
     context={}
@@ -575,6 +574,7 @@ def admin_add_poll(request):
         
 
 # Admin View Poll 
+@login_required(login_url='/admin-login')
 def admin_view_poll(request):
     context={}
     p=Poll.objects.all().order_by('-created_at')
@@ -582,6 +582,8 @@ def admin_view_poll(request):
     return render(request, 'admin-view-poll.html', context)
 
 
+# Admin can delete particular Poll
+@login_required(login_url='/admin-login')
 def admin_delete_poll(request,pid):
     poll = Poll.objects.filter(id=pid)
     poll.delete()
