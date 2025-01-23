@@ -308,6 +308,18 @@ def paymentsuccess(request):
 
 
 
+# Owner View Complaint
+@login_required(login_url='/owner-login')
+def owner_view_complaint(request):
+    context={}
+    c = Complaint.objects.filter(uid=request.user.id)
+    print(c)
+    context['data']=c 
+    return render(request, 'owner-view-complaint.html', context)
+
+
+
+
 
 # Owner can Raise Complaint
 @login_required(login_url='/owner-login')
@@ -383,6 +395,7 @@ def admin_dashboard(request):
 
         ownerCount=Flat.objects.count()
         noticeCount = Notice.objects.count()
+        compCount = Complaint.objects.count()
 
         mamount = 0
         m=MaintenancePayment.objects.all()
@@ -393,8 +406,8 @@ def admin_dashboard(request):
             'ocount': ownerCount,
             'ncount' : noticeCount,
             'current_date' : current_date,
-            'mamount' : mamount
-            # 'compCount':complaintCount,
+            'mamount' : mamount,
+            'compCount':compCount,
         }
         return render(request, 'admin-dashboard.html', context)
 

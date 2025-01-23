@@ -16,6 +16,7 @@ urlpatterns = [
     path('owner-book-amenity', views.owner_book_amenity),   # to view all amenity
     path('bookAmenity/<aid>', views.bookAmenity),    # to book particular amenity
     path('owner-maintenance', views.owner_maintenance),
+    path('owner-view-complaint', views.owner_view_complaint),
     path('owner-raise-complaint', views.owner_raise_complaint),
     path('makepayment',views.makepayment),
     path('paymentsuccess',views.paymentsuccess),
