@@ -7,8 +7,11 @@ from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
 import os
+import datetime
+import random
 import razorpay
 from django.core.mail import send_mail 
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
 
@@ -38,8 +41,10 @@ def owner_register(request):
             # print('Password must be atleast 8 character')
             context['errormsg']='Password must be atleast 8 character'
         elif p!=cp:
-            # print('Password and Confirm password must be same')
             context['errormsg']='Password and Confirm password must be same'
+        # check whether entered flat no is already present or not in table
+        elif Flat.objects.filter(flat_no=flatno).exists():
+            context['errormsg']="This Flat's Owner is already Registered "
         else:
             try:
                 u=User.objects.create(username=ue,email=ue,first_name=uname)
@@ -50,6 +55,7 @@ def owner_register(request):
                 context['success']='User Created Successfully'
             except Exception:
                 context['errormsg']='User Already Exists'
+
         return render(request,'owner-register.html',context)
     
 
@@ -74,6 +80,81 @@ def owner_login(request):
 def owner_logout(request):
     logout(request)
     return redirect('/')
+
+
+
+
+
+
+
+
+
+
+# Forget Password functionality
+# Send OTP
+# def send_otp(request, uemail):
+#     context = {}
+#     u = User.objects.get(email=uemail)
+#     user_email = order.uid.email
+    
+#     # Generate a random 4-digit OTP
+#     otp = str(random.randint(1000, 9999))
+
+#     # Save OTP to the database
+#     OTP.objects.create(
+#         oid=order,
+#         otp=otp,
+#         email=customer_email,
+#     )
+    
+#     # Send OTP to customer email
+#     send_mail(
+#         'Your Order OTP',
+#         f'Your OTP for order is {otp}. Kindly share it at the time of delivery.',
+#         'santa.treasure2024@gmail.com',
+#         [customer_email],
+#         fail_silently=False,
+#     )
+#     return redirect('verify_otp', order_id=order.id)
+
+
+# # OTP verification 
+# def verify_otp(request, order_id):
+#     context = {}
+#     if request.method == 'POST':
+#         input_otp = request.POST['otp']
+#         try:
+#             # otp_entry = OTP.objects.get(oid=order_id)
+#             otp_entry = OTP.objects.filter(oid=order_id).order_by('-created_at').first()
+
+
+#             # Check if the OTP is correct
+#             if input_otp == otp_entry.otp:
+#                 # Update the order status to "Delivered"
+#                 order = otp_entry.oid  # Fetch the actual order object here
+#                 order.status = 'Delivered'
+#                 order.save()
+
+#                 context['success_message'] = 'Order delivered successfully!'
+#                 context['redirect'] = True  # Flag to trigger JavaScript redirect
+#             else:
+#                 context['error_message'] = 'Incorrect OTP. Please try again.'
+        
+#         except OTP.DoesNotExist:
+#             return redirect('/trackorder')  # Or any appropriate redirect
+    
+#     # Pass the order_id and any messages to the template
+#     return render(request, 'verify_otp.html', {'order_id': order_id, **context})
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -252,7 +333,6 @@ def owner_maintenance(request):
 # Owner Make Payment Page
 @login_required(login_url='/owner-login')
 def makepayment(request):
-    amount = 1000
     context={}
     RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
     RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
@@ -260,7 +340,7 @@ def makepayment(request):
     # print(RAZORPAY_API_KEY)
     # print(RAZORPAY_API_PASS)
 
-    amt = amount
+    amt = 1000
     client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
 
     amt = int(float(amt) * 100) # to convert amount to paise 
@@ -283,6 +363,9 @@ def paymentsuccess(request):
     u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
     to=u[0].email
 
+    fid = Flat.objects.get(uid=request.user.id)
+
+    print(fid)
     send_mail(
         sub,
         msg,
@@ -294,7 +377,7 @@ def paymentsuccess(request):
     # Insert a record in the MaintenancePayment model
     payment_data = {
         'uid': request.user,  # Assuming the user who made the payment
-        # 'month': timezone.now().date(),  # Current month  
+        'fid' : fid,
         'payment_date': timezone.now().date(),  # Current date of payment
         'amount': 1000,  # Amount paid (pass as parameter from Razorpay response)
     }
@@ -348,6 +431,16 @@ def owner_raise_complaint(request):
             except Exception:
                 context['errormsg']='Re-try Again'
         return render(request,'owner-raise-complaint.html',context)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -423,9 +516,9 @@ def admin_add_notice(request):
         return render(request, 'admin-addnotice.html', context)
     else:
         title = request.POST['title']
-        cat = request.POST['category']
+        cat = request.POST.get('category')  # MultiValueDictKeyError
         des = request.POST['description']
-        priority = request.POST['priority']
+        priority = request.POST.get('category')
 
         print(title)
         print(cat)
@@ -474,6 +567,45 @@ def admin_maintenance(request):
     m = MaintenancePayment.objects.all().order_by('-payment_date')
     context['data'] = m
     return render(request, 'admin-maintenance.html', context)
+
+
+
+
+@login_required(login_url='/admin-login')
+def admin_maintenance_filter(request):
+    if not request.user.is_staff:  # Ensure only admins can access
+        return redirect('/admin-login')
+
+
+    context={}
+    m = MaintenancePayment.objects.all()
+
+    flatno = request.POST['flatno']  
+    ownername = request.POST['oname']  
+    start_date = request.POST['start_date'] 
+    end_date = request.POST['end_date']  
+
+    if flatno:
+        m = m.filter(fid__flat_no__icontains=flatno)
+
+    if ownername:
+        m = m.filter(uid__first_name__icontains=ownername)
+
+    if start_date:
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')  # Ensure the start date is converted to a datetime object
+        m = m.filter(payment_date__gte=start_date_obj)
+
+    if end_date:
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')  # Ensure the end date is converted to a datetime object
+        # Set the time to the last moment of the end date (23:59:59.999999)
+        end_date_obj = end_date_obj.replace(hour=23, minute=59, second=59, microsecond=999999)
+        m = m.filter(payment_date__lte=end_date_obj)
+
+    # Pass filtered results to the template
+    context['data']=m
+    return render(request, 'admin-maintenance.html', context)
+
+
 
 
 

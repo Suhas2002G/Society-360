@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin-edit-notice/<nid>', views.admin_edit_notice),
     path('admin-usermanage', views.admin_usermanage),
     path('admin-maintenance', views.admin_maintenance),
+    path('admin-maintenance-filter', views.admin_maintenance_filter),
     path('admin-add-amenity', views.admin_add_amenity),
     path('admin-view-amenity', views.admin_view_amenity),
     path('admin-delete-amenity/<aid>', views.admin_delete_amenity),

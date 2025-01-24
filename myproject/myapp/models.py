@@ -14,6 +14,7 @@ class Flat(models.Model):
 # Maintenance Payment Model
 class MaintenancePayment(models.Model):
     uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    fid = models.ForeignKey('Flat', on_delete=models.CASCADE, db_column='fid', null=True)
     payment_date = models.DateField()  
     amount= models.DecimalField(max_digits=10, decimal_places=2)  
     
