@@ -33,6 +33,7 @@ body{
 }
 .navbar-brand{
   color: white;
+  font-size: 1.45rem;
 
 }
 .navbar-nav .nav-link {
@@ -665,11 +666,14 @@ footer .social-icons a {
   font-size: 16px;
   border-radius: 5px;
   width: 100%;
+  margin-top: 10px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .owner-maintenance-btn:hover {
   background-color: #45a049;
+  color: black;
 }
 .pay-btn{
   text-decoration: none;
@@ -763,7 +767,56 @@ footer .social-icons a {
 
 
 
+/* Emergency Contact List */
+.emerg-contact-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  margin-bottom: 20px;
+}
 
+.emerg-contact-card:hover {
+  transform: scale(1.05);
+}
+
+.emerg-contact-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.emerg-contact-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.emerg-contact-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.emerg-contact-work {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.emerg-contact-phone {
+  font-size: 14px;
+  color: #007BFF;
+}
+
+/* Responsive Layout */
+@media (max-width: 767px) {
+  .emerg-contact-card {
+      margin-bottom: 15px;
+  }
+}
+
+/* Emergency contact ends here  */
 
 
 
@@ -829,14 +882,14 @@ footer .social-icons a {
 
 .dashboard-title {
   font-size: 36px;
-  color: #FF204E;
+  color: #426aa8;
   font-weight: bold;
   text-transform: uppercase;
 }
 
 .dashboard-subtitle {
   font-size: 18px;
-  color: #5D0E41;
+  color: #0b082b;
   margin-top: 10px;
 }
 
@@ -848,7 +901,7 @@ footer .social-icons a {
 }
 
 .stat-card {
-  background-color: #fce6ed;
+  background-color: #ebf3ff;
   color: #0a090f;
   text-align: center;
   padding: 20px;

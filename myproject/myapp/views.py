@@ -412,7 +412,7 @@ def owner_raise_complaint(request):
         return render(request, 'owner-raise-complaint.html')
     else:
         t=request.POST['title']
-        cat=request.POST['category']
+        cat=request.POST.get('category')  # MultiValueDictKeyError
         desc=request.POST['description']
 
         print(t)
@@ -434,8 +434,11 @@ def owner_raise_complaint(request):
 
 
 
-
-
+# Emergency Contact List
+@login_required(login_url='/owner-login')
+def owner_emerg_contact(request):
+    context={}
+    return render(request, 'owner-emerg-contact.html', context)
 
 
 

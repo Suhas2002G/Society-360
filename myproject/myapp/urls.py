@@ -18,6 +18,7 @@ urlpatterns = [
     path('owner-maintenance', views.owner_maintenance),
     path('owner-view-complaint', views.owner_view_complaint),
     path('owner-raise-complaint', views.owner_raise_complaint),
+    path('owner-emerg-contact', views.owner_emerg_contact),
     path('makepayment',views.makepayment),
     path('paymentsuccess',views.paymentsuccess),
     path('amenitypaymentsuccess',views.amenitypaymentsuccess),
