@@ -13,3 +13,4 @@ document.querySelectorAll('.nav-link').forEach(link => {
       this.classList.add('active');
     });
   });
+

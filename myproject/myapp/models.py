@@ -45,14 +45,14 @@ class Complaint(models.Model):
 
 # Notice Model
 class Notice(models.Model):
-    CAT = [
-        ('events', 'Events'),
-        ('maintenance', 'Maintenance Updates'),
-        ('general', 'General Announcements'),
-    ]
+    # CAT = [
+    #     ('events', 'Events'),
+    #     ('maintenance', 'Maintenance Updates'),
+    #     ('general', 'General Announcements'),
+    # ]
     title = models.CharField(max_length=100)
     des = models.TextField( db_column='description')
-    category = models.CharField(max_length=20, choices=CAT)
+    category = models.CharField(max_length=20)  #choices=CAT
     priority = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -69,15 +69,6 @@ class Amenity(models.Model):
     img = models.ImageField(upload_to='image')
 
 
-# Poll Model
-class Poll(models.Model):
-    question = models.CharField(max_length=255)
-    option_1 = models.CharField(max_length=255)
-    option_2 = models.CharField(max_length=255)
-    votes_1 = models.IntegerField(default=0)
-    votes_2 = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.question
+
 
 

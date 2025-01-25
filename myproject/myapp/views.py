@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
-from myapp.models import Notice, Flat, Amenity, Poll, MaintenancePayment, BookingAmenity, Complaint
+from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint
 from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
@@ -162,7 +162,6 @@ def owner_logout(request):
 @login_required(login_url='/owner-login')
 def owner_home(request):
     context={}
-
     return render(request, 'owner-home.html', context)
 
 
@@ -177,42 +176,58 @@ def owner_notice(request):
 
 
 
-# Owner view Poll and Surveys
+
+
+# Owner Maintenance Payment
 @login_required(login_url='/owner-login')
-def owner_view_poll(request):
-    context={}
-    p=Poll.objects.all().order_by('-created_at')
-    context['data']=p
-    return render(request, 'owner-view-poll.html', context)
+def owner_maintenance(request):
+    context = {}
+    user = request.user  # Get the current logged-in user
+    context['user'] = user
 
+    # Get the current month (using year and month for comparison)
+    current_month = timezone.now().date().replace(day=1)
+    current_month_str = current_month.strftime('%Y-%m')  # Get year-month in 'YYYY-MM' format
 
+    # Check if the user has already paid for the current month
+    payment_exists = MaintenancePayment.objects.filter(uid=user, payment_date__month=current_month.month, payment_date__year=current_month.year).exists()
 
-# Owner can Vote for Poll and Surveys
-@login_required(login_url='/owner-login')
-def vote(request, vid, op):
-    # Fetch the poll using get_object_or_404 to handle invalid poll IDs
-    poll = get_object_or_404(Poll, id=vid)
-    
-    # Update the vote count for the selected option
-    if op == '1':    
-        poll.votes_1 += 1
-    elif op == '2':  
-        poll.votes_2 += 1
-    
-    poll.save()  
-
-    # Calculate percentages after voting
-    total_votes = poll.votes_1 + poll.votes_2
-    if total_votes > 0:
-        percentage_1 = (poll.votes_1 / total_votes) * 100
-        percentage_2 = (poll.votes_2 / total_votes) * 100
+    if payment_exists:
+        context['already_paid'] = "You have already paid your maintenance for this month."
+        context['payment_status'] = 'paid'  # To disable Pay Now button in the template
     else:
-        percentage_1 = 0
-        percentage_2 = 0
+        context['amount'] = 1000  # Amount to be paid
 
-    # Redirect the user to the polls listing page after voting
-    return redirect('/owner-view-poll')   
-        
+    # Fetch previous payment history (optional)
+    previous_payments = MaintenancePayment.objects.filter(uid=user).order_by('-payment_date')
+    context['previous_payments'] = previous_payments
+
+    return render(request, 'owner-maintenance.html', context)
+
+
+
+
+# Owner Make Payment Page
+@login_required(login_url='/owner-login')
+def makepayment(request):
+    context={}
+    RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+    RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+
+    # print(RAZORPAY_API_KEY)
+    # print(RAZORPAY_API_PASS)
+
+    amt = 1000
+    client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
+
+    amt = int(float(amt) * 100) # to convert amount to paise 
+
+    data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
+    payment = client.order.create(data=data)
+    context['payment']=payment
+    
+    return render(request, 'pay.html', context)
+    
 
 
 
@@ -301,56 +316,6 @@ def amenitypaymentsuccess(request):
 
 
 
-# Owner Maintenance Payment
-@login_required(login_url='/owner-login')
-def owner_maintenance(request):
-    context = {}
-    user = request.user  # Get the current logged-in user
-    context['user'] = user
-
-    # Get the current month (using year and month for comparison)
-    current_month = timezone.now().date().replace(day=1)
-    current_month_str = current_month.strftime('%Y-%m')  # Get year-month in 'YYYY-MM' format
-
-    # Check if the user has already paid for the current month
-    payment_exists = MaintenancePayment.objects.filter(uid=user, payment_date__month=current_month.month, payment_date__year=current_month.year).exists()
-
-    if payment_exists:
-        context['already_paid'] = "You have already paid your maintenance for this month."
-        context['payment_status'] = 'paid'  # To disable Pay Now button in the template
-    else:
-        context['amount'] = 1000  # Amount to be paid
-
-    # Fetch previous payment history (optional)
-    previous_payments = MaintenancePayment.objects.filter(uid=user).order_by('-payment_date')
-    context['previous_payments'] = previous_payments
-
-    return render(request, 'owner-maintenance.html', context)
-
-
-
-
-# Owner Make Payment Page
-@login_required(login_url='/owner-login')
-def makepayment(request):
-    context={}
-    RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
-    RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
-
-    # print(RAZORPAY_API_KEY)
-    # print(RAZORPAY_API_PASS)
-
-    amt = 1000
-    client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
-
-    amt = int(float(amt) * 100) # to convert amount to paise 
-
-    data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
-    payment = client.order.create(data=data)
-    context['payment']=payment
-    
-    return render(request, 'pay.html', context)
-    
 
 
 # # Payment-Success page after paying Maintenance & Email Integration
@@ -434,6 +399,7 @@ def owner_raise_complaint(request):
 
 
 
+
 # Emergency Contact List
 @login_required(login_url='/owner-login')
 def owner_emerg_contact(request):
@@ -452,11 +418,12 @@ def owner_emerg_contact(request):
 
 
 
-
-
-
-
+#````````````````````````````````````````````````````````````
 #~~~~~~~~~~~~~~~~~~~~~  ADMIN PART  ~~~~~~~~~~~~~~~~~~~~~~~~#
+#............................................................
+
+
+
 
 
 # Admin Login
@@ -477,6 +444,7 @@ def admin_login(request):
     else:
         context['errormsg'] = 'Invalid Admin Credentials'
     return render(request, 'admin-login.html', context)  # Render the login page with error message
+
 
 
 # Admin Dashboard
@@ -509,6 +477,53 @@ def admin_dashboard(request):
 
 
 
+# Admin View Notice
+@login_required(login_url='/admin-login')
+def admin_view_notice(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    context = {}
+    try:
+        # Fetching all notices
+        notices = Notice.objects.all().order_by('-created_at')
+        context['notices'] = notices
+    except Exception as e:
+        context['errormsg'] = f"Error fetching notices: {e}"
+
+    return render(request, 'admin-viewnotice.html', context)
+
+
+
+
+# Admin can delete particular Notice
+@login_required(login_url='/admin-login')
+def admin_delete_notice(request,nid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    context = {}
+    notice = Notice.objects.filter(id=nid)
+    # print(notice)
+    # return HttpResponse('fetched')
+    notice.delete()
+    return redirect('/admin-viewnotice')
+
+
+
+# Admin can edit particular Notice
+@login_required(login_url='/admin-login')
+def admin_edit_notice(request,nid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    context = {}
+    notice = Notice.objects.filter(id=nid)
+    context['notices'] = notice
+    return render(request, 'admin-edit-notice.html', context)
+
+
+# Admin Add New Notice
 @login_required(login_url='/admin-login')
 def admin_add_notice(request):
     if not request.user.is_staff:  # Check if the user is an admin
@@ -540,6 +555,7 @@ def admin_add_notice(request):
 
 
 
+# Admin can do Owner Management
 @login_required(login_url='/admin-login')
 def admin_usermanage(request):
     if not request.user.is_staff:  # Check if the user is an admin
@@ -561,6 +577,7 @@ def admin_usermanage(request):
     return render(request, 'admin-usermanage.html', context)
 
 
+# Admin Maintenance Management
 @login_required(login_url='/admin-login')
 def admin_maintenance(request):
     if not request.user.is_staff:  # Check if the user is an admin
@@ -573,12 +590,11 @@ def admin_maintenance(request):
 
 
 
-
+# Admin Maintenance Dashboard Filter
 @login_required(login_url='/admin-login')
 def admin_maintenance_filter(request):
     if not request.user.is_staff:  # Ensure only admins can access
         return redirect('/admin-login')
-
 
     context={}
     m = MaintenancePayment.objects.all()
@@ -679,51 +695,6 @@ def admin_delete_amenity(request,aid):
 
 
 
-# Admin View Notice
-@login_required(login_url='/admin-login')
-def admin_view_notice(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    try:
-        # Fetching all notices
-        notices = Notice.objects.all().order_by('-created_at')
-        context['notices'] = notices
-    except Exception as e:
-        context['errormsg'] = f"Error fetching notices: {e}"
-
-    return render(request, 'admin-viewnotice.html', context)
-
-
-
-
-# Admin can delete particular Notice
-@login_required(login_url='/admin-login')
-def admin_delete_notice(request,nid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    notice = Notice.objects.filter(id=nid)
-    # print(notice)
-    # return HttpResponse('fetched')
-    notice.delete()
-    return redirect('/admin-viewnotice')
-
-
-
-# Admin can edit particular Notice
-@login_required(login_url='/admin-login')
-def admin_edit_notice(request,nid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    notice = Notice.objects.filter(id=nid)
-    context['notices'] = notice
-    return render(request, 'admin-edit-notice.html', context)
-
 
 
 # Admin can see all bookings
@@ -739,55 +710,7 @@ def admin_booking(request):
 
 
 
-
-# Admin Poll and Surveys
-@login_required(login_url='/admin-login')
-def admin_add_poll(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context={}
-    if request.method=='GET':
-        return render(request,'admin-add-poll.html')
-    else:
-        q=request.POST['question']
-        op1=request.POST['option1']
-        op2=request.POST['option2']
-
-        if q=='' or op1=='' or op2=='' :
-            context['errormsg']='Please fill all the fields'
-        else:
-            p=Poll.objects.create(question=q,option_1=op1,option_2=op2)
-            p.save()
-            context['successmsg']='Poll has been posted successfully..!'
-        return render(request,'admin-add-poll.html',context)
-
-        
-
-# Admin View Poll 
-@login_required(login_url='/admin-login')
-def admin_view_poll(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context={}
-    p=Poll.objects.all().order_by('-created_at')
-    context['data']=p
-    return render(request, 'admin-view-poll.html', context)
-
-
-# Admin can delete particular Poll
-@login_required(login_url='/admin-login')
-def admin_delete_poll(request,pid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    poll = Poll.objects.filter(id=pid)
-    poll.delete()
-    return redirect('/admin-view-poll')
-
-
-
+# Complaint Lists
 @login_required(login_url='/admin-login')
 def admin_manage_complaint(request):
     if not request.user.is_staff:  # Check if the user is an admin

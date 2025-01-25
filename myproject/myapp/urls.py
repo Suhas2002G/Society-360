@@ -11,8 +11,6 @@ urlpatterns = [
     path('logout', views.owner_logout),
     path('owner-home', views.owner_home),
     path('owner-notice', views.owner_notice),
-    path('owner-view-poll', views.owner_view_poll),
-    path('vote/<vid>/<op>', views.vote),
     path('owner-book-amenity', views.owner_book_amenity),   # to view all amenity
     path('bookAmenity/<aid>', views.bookAmenity),    # to book particular amenity
     path('owner-maintenance', views.owner_maintenance),
@@ -22,7 +20,6 @@ urlpatterns = [
     path('makepayment',views.makepayment),
     path('paymentsuccess',views.paymentsuccess),
     path('amenitypaymentsuccess',views.amenitypaymentsuccess),
-
 
 
     path('admin-login', views.admin_login),
@@ -36,14 +33,9 @@ urlpatterns = [
     path('admin-add-amenity', views.admin_add_amenity),
     path('admin-view-amenity', views.admin_view_amenity),
     path('admin-delete-amenity/<aid>', views.admin_delete_amenity),
-    path('admin-delete-poll/<pid>', views.admin_delete_poll),
     path('admin-viewnotice', views.admin_view_notice),
-    path('admin-add-poll', views.admin_add_poll),
-    path('admin-view-poll', views.admin_view_poll),
     path('admin-booking', views.admin_booking),
     path('admin-manage-complaint', views.admin_manage_complaint),
     
-    
-
 ]
 urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
