@@ -231,6 +231,43 @@ def makepayment(request):
 
 
 
+# # Payment-Success page after paying Maintenance & Email Integration
+@login_required(login_url='/owner-login')
+def paymentsuccess(request):
+    sub='Society360 Monthly Maintenance'
+    msg="We have received monthly maintenance from your side. Thank you..! "
+    frm=os.getenv('EMAIL_HOST_USER')
+
+    u=User.objects.filter(id=request.user.id)    #email should go to authenticated user only 
+    to=u[0].email
+
+    fid = Flat.objects.get(uid=request.user.id)
+
+    print(fid)
+    send_mail(
+        sub,
+        msg,
+        frm,
+        [to],               #list beacause we can send mail to multiple emails-ids
+        fail_silently=False
+    )
+
+    # Insert a record in the MaintenancePayment model
+    payment_data = {
+        'uid': request.user,  
+        'fid' : fid,
+        'payment_date': timezone.now().date(),  
+        'amount': 1000,  
+    }
+    
+    # save the MaintenancePayment record
+    MaintenancePayment.objects.create(**payment_data)
+
+    return render(request, 'paymentsuccess.html')
+
+
+
+
 # Owner View Book Amenity
 @login_required(login_url='/owner-login')
 def owner_book_amenity(request):
@@ -309,46 +346,6 @@ def amenitypaymentsuccess(request):
         [to],               #list beacause we can send mail to multiple emails-ids
         fail_silently=False
     )
-
-    return render(request, 'paymentsuccess.html')
-
-
-
-
-
-
-
-# # Payment-Success page after paying Maintenance & Email Integration
-@login_required(login_url='/owner-login')
-def paymentsuccess(request):
-    sub='Society360 Monthly Maintenance'
-    msg="We have received monthly maintenance from your side. Thank you..! "
-    frm=os.getenv('EMAIL_HOST_USER')
-
-    u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
-    to=u[0].email
-
-    fid = Flat.objects.get(uid=request.user.id)
-
-    print(fid)
-    send_mail(
-        sub,
-        msg,
-        frm,
-        [to],               #list beacause we can send mail to multiple emails-ids
-        fail_silently=False
-    )
-
-    # Insert a record in the MaintenancePayment model
-    payment_data = {
-        'uid': request.user,  # Assuming the user who made the payment
-        'fid' : fid,
-        'payment_date': timezone.now().date(),  # Current date of payment
-        'amount': 1000,  # Amount paid (pass as parameter from Razorpay response)
-    }
-    
-    # Create and save the MaintenancePayment record
-    MaintenancePayment.objects.create(**payment_data)
 
     return render(request, 'paymentsuccess.html')
 
