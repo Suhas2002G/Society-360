@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+  <h1 class="admin-usermanage-title">Bookings of Amenities</h1>
+  <!-- <a href="/admin-addnotice" class="btn btn-primary admin-amenity-view-add-btn"><i class="bi bi-plus-circle"></i> Add New Notice</a> -->
+</div>
+<div class="admin-booking-page-card">
+  {% if data %} 
+
+  {% for i in data %}
+  <div class="col-md-10 mb-2">
+    <div class="admin-booking-page-card-item">
+      <div class="admin-booking-page-card-img">
+        <img src="{{i.aid.img.url}}" alt="Amenity Image" />
+      </div>
+      <div class="admin-booking-page-card-details">
+        <h5 class="admin-booking-page-title">{{i.aid.amenity}}</h5>
+        <p class="admin-booking-page-booked-by">
+          <strong>Booked By:</strong> {{i.uid.first_name}}
+        </p>
+        <p class="admin-booking-page-date">
+          <strong>Date:</strong> {{i.booking_date}}
+        </p>
+        <p class="admin-booking-page-amount">
+          <strong>Amount Paid:</strong> Rs.{{i.amount}}
+        </p>
+        <p class="admin-booking-page-payment">
+          <strong>Payment Status:</strong> Successful
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% else %}
+  <h6 style="color: red;">No bookings found..!</h6>
+  {% endif %}
+</div>
+
+{% endblock 'main' %}

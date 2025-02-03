@@ -240,16 +240,20 @@ def paymentsuccess(request):
 
     u=User.objects.filter(id=request.user.id)    #email should go to authenticated user only 
     to=u[0].email
+    print(u)            #<QuerySet [<User: suhas8838@gmail.com>]>
+    print(u[0].email)   #suhas8838@gmail.com
 
     fid = Flat.objects.get(uid=request.user.id)
+    # print(fid)
 
-    print(fid)
+# send_mail() function should have following sequence of parameters
     send_mail(
         sub,
         msg,
         frm,
-        [to],               #list beacause we can send mail to multiple emails-ids
-        fail_silently=False
+        [to],          #list beacause we can send mail to multiple emails-ids
+        fail_silently=False  
+        # if there is invalid email, then it will shows mail could not be delivered
     )
 
     # Insert a record in the MaintenancePayment model
@@ -350,6 +354,13 @@ def amenitypaymentsuccess(request):
     return render(request, 'paymentsuccess.html')
 
 
+# View History of Bookings.
+@login_required(login_url='/owner-login')
+def owner_view_booking(request):
+    a = BookingAmenity.objects.filter(uid = request.user.id)
+    context={}
+    context['data']=a
+    return render(request, 'owner-view-booking.html', context)
 
 
 
