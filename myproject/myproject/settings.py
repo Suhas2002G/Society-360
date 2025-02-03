@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'society360',    #Database name
+        'NAME': 'society360',    # Database name
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',
@@ -123,11 +123,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True  # Keep this as True for timezone-aware datetimes
+
 
 USE_I18N = True
 
-USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)
