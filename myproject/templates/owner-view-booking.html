@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% load static %} {% block 'main' %}
+{% extends 'base.html' %} 
+{% load static %} 
+{% block 'main' %}
 
 <div class="d-flex justify-content-between align-items-center mt-4">
   <h1 class="admin-usermanage-title">Bookings of Amenities</h1>
@@ -27,6 +29,8 @@
         <p class="admin-booking-page-payment">
           <strong>Payment Status:</strong> Successful
         </p>
+        <a href="cancelbooking/{{i.id}}" style="color: rgb(252, 5, 5);">Cancel Booking </a>
+        <a href="" style="color: rgb(0, 0, 0); text-decoration: none;">[Note : You have to take refund from the office]</a>
       </div>
     </div>
   </div>
