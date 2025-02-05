@@ -364,6 +364,14 @@ def owner_view_booking(request):
 
 
 
+def cancelbooking(request,id):
+    context={}
+    a = BookingAmenity.objects.filter(uid = request.user.id, id=id)
+    # print(a)
+    a.delete()
+    return redirect('/owner-view-booking')
+
+
 # Owner View Complaint
 @login_required(login_url='/owner-login')
 def owner_view_complaint(request):
