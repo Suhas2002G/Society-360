@@ -287,11 +287,64 @@ def owner_book_amenity(request):
 
 
 # Owner Booking Amenity
+# @login_required(login_url='/owner-login')
+# def bookAmenity(request, aid):
+#     if request.method == 'GET':
+#         b_date = request.GET.get('booking_date')  # Get the booking date from query parameters
+#         context = {}
+
+#         # Check if the amenity is already booked on the given date
+#         existing_booking = BookingAmenity.objects.filter(aid=aid, booking_date=b_date).exists()
+
+#         if existing_booking:
+#             context['errormsg'] = "Amenity is booked by someone for the selected date."
+#             return render(request, 'owner-bookamenity.html', context)
+#         else:
+#             # Proceed with booking if not already booked
+#             a = Amenity.objects.get(id=aid)
+#             amount = a.rent
+
+#             RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+#             RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+
+#             amt = int(float(amount) * 100)  # Convert to paise
+#             client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
+
+#             # Create payment order
+#             data = {"amount": amt, "currency": "INR", "receipt": f"order_rcptid_{aid}"}
+#             payment = client.order.create(data=data)
+#             context['payment'] = payment
+
+#             # Insert a record into the BookingAmenity model
+#             booking_data = {
+#                 'uid': request.user,
+#                 'booking_date': b_date,
+#                 'payment_date': timezone.now().date(),
+#                 'amount': amount,
+#                 'aid': a,
+#             }
+
+#             BookingAmenity.objects.create(**booking_data)
+
+#             context['success_message'] = "Amenity booked successfully!"
+#             return render(request, 'amenitypay.html', context)
+
+#     return HttpResponse("Invalid request method.", status=405)
+
 @login_required(login_url='/owner-login')
 def bookAmenity(request, aid):
     if request.method == 'GET':
         b_date = request.GET.get('booking_date')  # Get the booking date from query parameters
         context = {}
+
+        # Convert the booking date to a date object
+        booking_date = timezone.datetime.strptime(b_date, '%Y-%m-%d').date()
+
+        # Check if the selected booking date is in the future
+        today = date.today()
+        if booking_date < today:
+            context['errormsg'] = "Please select a future date for booking."
+            return render(request, 'owner-bookamenity.html', context)
 
         # Check if the amenity is already booked on the given date
         existing_booking = BookingAmenity.objects.filter(aid=aid, booking_date=b_date).exists()
@@ -330,8 +383,7 @@ def bookAmenity(request, aid):
             return render(request, 'amenitypay.html', context)
 
     return HttpResponse("Invalid request method.", status=405)
-
-
+    
 
 # Owner Amenity Payment Page
 @login_required(login_url='/owner-login')
