@@ -89,86 +89,87 @@ def forgetpass(request):
 
 
 def sendOTP(request):
-    context={}
+    context = {}
     if request.method == "POST":
-        e = request.POST.get("uemail")  
+        e = request.POST.get("uemail")
 
-        # Check if user exists or not
+        # Check if user exists
         if User.objects.filter(email=e).exists():
-            
             otp = str(random.randint(1000, 9999))
-            # print(otp)
-            # Save OTP to the database
-            Otp.objects.create(
-                otp=otp,
-                email=e,
+
+            # Save OTP 
+            Otp.objects.create(otp=otp, email=e)
+
+            # Store email in session
+            request.session['reset_email'] = e  
+
+            # Send OTP to user email
+            send_mail(
+                'Reset Password',
+                f"Your OTP for password reset is: {otp}",
+                os.getenv('EMAIL_HOST_USER'),
+                [e],
+                fail_silently=False,
             )
-            return HttpResponse("Fetched")
+
+            return redirect('/verify-otp')  # Redirect without email in URL
         else:
-            context['errormsg']='This email id is not registered with us..! '
+            context['errormsg'] = 'This email ID is not registered with us!'
             return render(request, 'forget-password.html', context)
 
-# Forget Password functionality
-# Send OTP
-# def send_otp(request, uemail):
-#     context = {}
-#     u = User.objects.get(email=uemail)
-#     user_email = order.uid.email
+
+
+def verify_otp(request):
+    context = {}
+    e = request.session.get('reset_email')   # Retrieve email from session
+    if not e:
+        return redirect('/forgetpass')  # Redirect if email is missing
+
+    if request.method == 'POST':
+        input_otp = request.POST.get('otp')
+        otp_entry = Otp.objects.filter(email=e).order_by('-created_at').first()
+ 
+        if otp_entry.otp == input_otp:
+            return redirect('/setPass')  # Redirect to password reset page
+        else:
+            context['error_message'] = 'Incorrect OTP. Please try again.'
+    return render(request, 'verify-otp.html', context)
+
+
+
+
+def setPass(request):
+    context = {}
+    e = request.session.get('reset_email')  # Retrieve email from session
+    if not e:
+        return redirect('/forgetpass')
     
-#     # Generate a random 4-digit OTP
-#     otp = str(random.randint(1000, 9999))
+    if request.method == 'GET':
+        return render(request, 'setPass.html')
+    else:
+        p = request.POST.get('pass', '')
+        cp = request.POST.get('cpass', '')
 
-#     # Save OTP to the database
-#     OTP.objects.create(
-#         oid=order,
-#         otp=otp,
-#         email=customer_email,
-#     )
-    
-#     # Send OTP to customer email
-#     send_mail(
-#         'Your Order OTP',
-#         f'Your OTP for order is {otp}. Kindly share it at the time of delivery.',
-#         'santa.treasure2024@gmail.com',
-#         [customer_email],
-#         fail_silently=False,
-#     )
-#     return redirect('verify_otp', order_id=order.id)
+        if p=='' or cp=='':
+            context['error_message'] = 'Please fill in all fields.'
+        elif p != cp:
+            context['error_message'] = 'Passwords do not match.'
+        else:
+            try:
+                user = User.objects.filter(email=e).first()
+                if user:
+                    user.set_password(p)
+                    user.save()
+                    request.session.flush()  # Clear session data after successful reset
+                    context['success_message'] = 'Password Successfully Reset.'
+                    return render(request,'setPass.html', context)  # Redirect to login page
+                    
+                else:
+                    context['error_message'] = 'User not found.'
+            except Exception as err:
+                context['error_message'] = 'An error occurred. Please try again.'
 
-
-# # OTP verification 
-# def verify_otp(request, order_id):
-#     context = {}
-#     if request.method == 'POST':
-#         input_otp = request.POST['otp']
-#         try:
-#             # otp_entry = OTP.objects.get(oid=order_id)
-#             otp_entry = OTP.objects.filter(oid=order_id).order_by('-created_at').first()
-
-
-#             # Check if the OTP is correct
-#             if input_otp == otp_entry.otp:
-#                 # Update the order status to "Delivered"
-#                 order = otp_entry.oid  # Fetch the actual order object here
-#                 order.status = 'Delivered'
-#                 order.save()
-
-#                 context['success_message'] = 'Order delivered successfully!'
-#                 context['redirect'] = True  # Flag to trigger JavaScript redirect
-#             else:
-#                 context['error_message'] = 'Incorrect OTP. Please try again.'
-        
-#         except OTP.DoesNotExist:
-#             return redirect('/trackorder')  # Or any appropriate redirect
-    
-#     # Pass the order_id and any messages to the template
-#     return render(request, 'verify_otp.html', {'order_id': order_id, **context})
-
-
-
-
-
-
+    return render(request, 'setPass.html', context)
 
 
 

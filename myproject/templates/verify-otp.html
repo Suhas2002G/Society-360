@@ -1,0 +1,43 @@
+{% include 'header.html' %}
+
+<div class="otp-container">
+    <div class="otp-card">
+        {% if success_message %}
+            <!-- Success alert -->
+            <div class="alert alert-success text-center" id="success-message">
+                {{ success_message }}
+            </div>
+        {% elif error_message %}
+            <!-- Error alert -->
+            <div class="alert alert-danger text-center" id="error" data-redirect-url="/verify-otp">
+                {{ error_message }}
+            </div>
+            
+        {% endif %}
+        
+        
+        <div class="otp-card-header">
+            <h3>Verify OTP</h3>
+            <p class="otp-description">Please enter the OTP sent to your email to proceed.</p>
+        </div>
+        
+        <div class="otp-card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="otp-input-group">
+                    <!-- <label for="otp" class="otp-input-label">Enter OTP:</label> -->
+                    <input type="text" id="otp" class="otp-input-field" name="otp" placeholder="Enter 4-digit OTP" required maxlength="4" autocomplete="off">
+                </div>
+                
+                <button type="submit" class="otp-btn">Verify OTP</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+
+
+
+

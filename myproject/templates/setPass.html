@@ -1,0 +1,49 @@
+{% include 'header.html' %}
+
+<div class="otp-container">
+    <div class="otp-card">
+        {% if success_message %}
+            <!-- Success alert -->
+            <div class="alert alert-success text-center" id="success-message" data-redirect-url="/">
+                {{ success_message }}
+            </div>
+            <script>
+                // Redirect after 3 seconds
+                setTimeout(function() {
+                    window.location.href = document.getElementById("success-message").getAttribute("data-redirect-url");
+                }, 5000);
+            </script>
+        {% elif error_message %}
+            <!-- Error alert -->
+            <div class="alert alert-danger text-center" id="error">
+                {{ error_message }}
+            </div>
+            
+        {% endif %}
+        
+        
+        <div class="otp-card-header">
+            <h3>Reset Password</h3>
+            <p class="otp-description">Now, you can reset your password</p>
+        </div>
+        
+        <div class="otp-card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="otp-input-group">
+                    <input type="password" id="pass" class="otp-input-field" name="pass" placeholder="Enter password" required ><br><br>
+                    <input type="password" id="cpass" class="otp-input-field" name="cpass" placeholder="Confirm password" required >
+                </div>
+                
+                <button type="submit" class="otp-btn">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+
+
+
+
