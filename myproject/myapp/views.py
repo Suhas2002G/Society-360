@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
-from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint
+from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Otp
 from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
@@ -83,12 +83,30 @@ def owner_logout(request):
 
 
 
+def forgetpass(request):
+    return render(request, 'forget-password.html')
 
 
 
+def sendOTP(request):
+    context={}
+    if request.method == "POST":
+        e = request.POST.get("uemail")  
 
-
-
+        # Check if user exists or not
+        if User.objects.filter(email=e).exists():
+            
+            otp = str(random.randint(1000, 9999))
+            # print(otp)
+            # Save OTP to the database
+            Otp.objects.create(
+                otp=otp,
+                email=e,
+            )
+            return HttpResponse("Fetched")
+        else:
+            context['errormsg']='This email id is not registered with us..! '
+            return render(request, 'forget-password.html', context)
 
 # Forget Password functionality
 # Send OTP
