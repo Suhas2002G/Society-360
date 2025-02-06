@@ -9,6 +9,8 @@ urlpatterns = [
     path('owner-login', views.owner_login),
     path('owner-register', views.owner_register),
     path('logout', views.owner_logout),
+    path('forgetpass', views.forgetpass),
+    path('sendOTP', views.sendOTP),
     path('owner-home', views.owner_home),
     path('owner-notice', views.owner_notice),
     path('owner-book-amenity', views.owner_book_amenity),   # to view all amenity

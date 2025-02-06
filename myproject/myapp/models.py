@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 from django.contrib.auth.models import User
 
 
@@ -37,7 +38,10 @@ class Complaint(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-
+class Otp(models.Model):
+    email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    otp = models.CharField(max_length=4)
 
 
 #`````````      ADMIN MODEL    ````````````

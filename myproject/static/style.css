@@ -80,6 +80,60 @@ footer .social-icons a {
 
 
 
+/* forget-password starts here  */
+
+.forget {
+  background-image: url('https://sinch.com/wp-content/uploads/2024/08/1920x1080-Graphic-Only.png'); /* Replace with a valid image */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 81vh; /* Ensures better responsiveness */
+  font-family: Arial, sans-serif;
+  color: white; /* Adjust text color for better contrast */
+}
+
+
+
+.forget-pass-container {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 500px;
+}
+.forget-pass-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+.forget-pass-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+.forget-pass-link {
+  display: inline-block;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: none;
+  color: black;
+}
+.forget-pass-link:hover {
+  text-decoration: underline;
+  color: black;
+}
+/* forget-password ends here  */
+
+
 
 /* home.html starts here  */
 /* Hero Section */
