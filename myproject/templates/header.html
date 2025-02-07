@@ -51,17 +51,15 @@
             </li> -->
 
             {% if user.is_authenticated %}
-            <!-- <li class="nav-item">
-              <a class="nav-link" id="aboutLink" href="#">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="servicesLink" href="#">Services</a>
-            </li> -->
+          
             <li class="nav-item">
               <a class="nav-link " id="homeLink" href="/owner-home">Home</a>
             </li>
+            <li class="nav-item" >
+              <a class="nav-link " id="" href="/logout">Logout</a>
+            </li>
             <li class="nav-item" style="margin-right: 40px;">
-              <a class="nav-link active" id="" href="/logout">Logout</a>
+              <a class="nav-link active" id="" href="">Hi, {{user.first_name.split.0}}</a>
             </li>
             {% else %}
             <li class="nav-item">

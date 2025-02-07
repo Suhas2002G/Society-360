@@ -4,14 +4,26 @@
   <div class="register-container">
     <!-- Success/Error Messages -->
     {% if errormsg %}
-    <div class="alert alert-danger custom-alert" role="alert">
+    <div class="alert alert-danger custom-alert" role="alert" data-redirect-url="/owner-register">
       <i class="bi bi-x-circle"></i> {{ errormsg }}
     </div>
+    <script>
+      // Redirect after 5 seconds
+      setTimeout(function() {
+          window.location.href = document.getElementById("errormsg").getAttribute("data-redirect-url");
+      }, 3000);
+    </script>
     {% endif %}
     {% if success %}
-    <div class="alert alert-success custom-alert" role="alert">
+    <div class="alert alert-success custom-alert" role="alert" id="success" data-redirect-url="/owner-login">
       <i class="bi bi-check-circle"></i> {{ success }}
     </div>
+    <script>
+      // Redirect after 5 seconds
+      setTimeout(function() {
+          window.location.href = document.getElementById("success").getAttribute("data-redirect-url");
+      }, 3000);
+    </script>
     {% endif %}
 
     <!-- Registration Form -->
@@ -50,11 +62,13 @@
         <div class="col-md-6">
           <label for="number" class="form-label">Mobile Number</label>
           <input
-            type="number"
+            type="text"
             name="mob"
             class="form-control"
             id="mob"
             placeholder="Enter your mobile number"
+            maxlength="10"
+            pattern="\d{10}"   
             required
           />
         </div>
