@@ -2,8 +2,17 @@
 {% load static %}
 
 {% block 'main' %}
-<section class="home-hero" style="border-radius: 20px; margin-top: 20px; margin-right: 6px;" >
-    <div class="home-hero-content">
+<div class="owner-home-container">
+    <section class="owner-home-dashboard">
+        <div class="owner-home-welcome-message">
+            <h4>Welcome, {{user.first_name}}!</h4>
+            <!-- <h4>Welcome, {{user.email}}!</h4> -->
+            <p>Here's a quick overview of your society details and activities.</p>
+        </div>
+
+        
+    </section>
+        <!-- Features Section -->
         <section id="features" class="home-features">
             <div class="home-features-container">
                 <div class="home-feature">
@@ -24,43 +33,9 @@
                 </div>
             </div>
         </section>
-<!--         
-<div class="owner-home-container"  >
-    <div class="owner-home-header">
-        <h1>Welcome to Society360</h1>
-        <p>Manage your society effectively with ease.</p>
-    </div>
-
-    <div class="owner-home-actions row">
-        <div class="col-md-4 col-sm-6 owner-home-card">
-            <div class="owner-home-card-content">
-                <h3>View Notices</h3>
-                <p>Stay updated with the latest notices and announcements for your society.</p>
-                <a href="" class="owner-home-btn">View Notices</a>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-6 owner-home-card">
-            <div class="owner-home-card-content">
-                <h3>Pay Maintenance</h3>
-                <p>Conveniently pay your monthly maintenance charges online.</p>
-                <a href="" class="owner-home-btn">Pay Now</a>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-6 owner-home-card">
-            <div class="owner-home-card-content">
-                <h3>Track Payments</h3>
-                <p>View your payment history and receipts in one place.</p>
-                <a href="" class="owner-home-btn">Track Payments</a>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-
-
-    </div>
-</section>
-
-
+        
+    
+</div>
 
 {% endblock 'main' %}
+

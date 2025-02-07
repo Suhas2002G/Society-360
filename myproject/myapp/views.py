@@ -196,7 +196,6 @@ def owner_notice(request):
 
 
 
-
 # Owner Maintenance Payment
 @login_required(login_url='/owner-login')
 def owner_maintenance(request):
@@ -232,9 +231,6 @@ def makepayment(request):
     context={}
     RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
     RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
-
-    # print(RAZORPAY_API_KEY)
-    # print(RAZORPAY_API_PASS)
 
     amt = 1000
     client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
@@ -650,18 +646,28 @@ def admin_usermanage(request):
     
     context = {}
     users = User.objects.filter(is_staff=False) # Fetching users who are not staff (regular users)
-    print(users)
+    # print(users)
     # Fetching flat details associated with users
     users_flats = []
     for user in users:
         try:
             flat = Flat.objects.get(uid=user.id)  # Using 'user' for ForeignKey relation
-            users_flats.append({'user': user, 'flat': flat})
+            users_flats.append({'user': user, 'flat': flat, 'uid':user.id})
         except Flat.DoesNotExist:
             users_flats.append({'user': user, 'flat': None})
     
     context['users_flats'] = users_flats
     return render(request, 'admin-usermanage.html', context)
+
+
+# Admin can remove Owner 
+@login_required(login_url='/admin-login')
+def removeOwner(request,id):
+    u = User.objects.filter(id=id)
+    print(u)
+    u.delete()
+    return redirect('/admin-usermanage')
+
 
 
 # Admin Maintenance Management
@@ -780,6 +786,20 @@ def admin_delete_amenity(request,aid):
     return redirect('/admin-view-amenity')
 
 
+
+# Edit particular Amenity
+@login_required(login_url='/admin-login')
+def admin_edit_amenity(request,aid):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    context={}
+    if request.method=='GET':
+        a = Amenity.objects.filter(id=aid)
+        context['data']=a
+        return render(request,'admin-editAmenity.html',context)
+    else:
+        pass
 
 
 

@@ -38,7 +38,7 @@
                     <!-- <td>{{ user_data.user.is_active|yesno:"Active,Inactive" }}</td> -->
                     <td>
                         <!-- <a href="" class="btn btn-warning admin-usermanage-edit-btn">Edit</a> -->
-                        <a href="" class="btn btn-danger admin-usermanage-delete-btn">Remove Owner</a>
+                        <a href="/removeOwner/{{user_data.uid}}" class="btn btn-danger admin-usermanage-delete-btn">Remove Owner</a>
                     </td>
                 </tr>
                 {% endfor %}

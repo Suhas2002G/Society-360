@@ -1,1 +1,0 @@
-print('pPr mYZ'.capitalize())
