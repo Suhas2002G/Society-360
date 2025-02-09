@@ -44,6 +44,7 @@ body{
 .dropdown{
   margin-right: 90px;
 }
+
 .navbar-nav .nav-link.active {
   color: #FF204E !important;
 }
@@ -235,8 +236,7 @@ footer .social-icons a {
 /* home.html starts here  */
 /* Hero Section */
 .home-hero {
-  background: url('https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;
-  /* background: url('https://img.freepik.com/free-photo/analog-landscape-city-with-buildings_23-2149661456.jpg?t=st=1737432926~exp=1737436526~hmac=d50a81ac55534eb3d8d430e05f4ad5d069d90449af552b8878d1a57d2e46d1c6&w=1800') no-repeat center center/cover; */
+  background: url('images/sectionbg.avif') no-repeat center center/cover;
   height: 90vh;
   display: flex;
   justify-content: center;
@@ -380,7 +380,7 @@ footer .social-icons a {
 
 .home-cta-button {
   padding: 10px 30px;
-  background-color: #229799;
+  background-color: #d9754b;
   color: white;
   font-weight: bold;
   border-radius: 50px;
@@ -389,7 +389,8 @@ footer .social-icons a {
 }
 
 .home-cta-button:hover {
-  background-color: #48CFCB;
+  background-color: #f7b37b;
+  color: black;
 }
 /* home.html ends here  */
 
@@ -398,12 +399,10 @@ footer .social-icons a {
 
 /* login.html starts here */
 .container-bg-login {
-  /* background: linear-gradient(to bottom, #FF204E,#ac2943, #6a1123, #00224D); */
-  background-image: url('https://investindxb.com/wp-content/uploads/2021/10/Prime-Residency-3-by-Prescott-investindxb-02.jpg');
+  background-image: url('/static/images/loginbg.jpg');
   background-repeat: no-repeat;
   background-size: cover; /* Ensures the image covers the entire container */
   background-position: center; /* Centers the image */
-  
   min-height: 95vh;
   display: flex;
   justify-content: center;
@@ -516,8 +515,8 @@ footer .social-icons a {
 
 /* register.html starts here  */
 .container-bg-register {
-  /* background: linear-gradient(to bottom, #FF204E,#a91a37, #591422, #00224D); */
-  background-image: url('https://investindxb.com/wp-content/uploads/2021/10/Prime-Residency-3-by-Prescott-investindxb-02.jpg');
+  /* background-image: url('https://investindxb.com/wp-content/uploads/2021/10/Prime-Residency-3-by-Prescott-investindxb-02.jpg'); */
+  background-image: url('/static/images/loginbg.jpg');
   background-repeat: no-repeat;
   background-size: cover; /* Ensures the image covers the entire container */
   background-position: center; /* Centers the image */

@@ -382,6 +382,7 @@ def bookAmenity(request, aid):
             data = {"amount": amt, "currency": "INR", "receipt": f"order_rcptid_{aid}"}
             payment = client.order.create(data=data)
             context['payment'] = payment
+            
 
             # Insert a record into the BookingAmenity model
             booking_data = {
@@ -424,7 +425,7 @@ def amenitypaymentsuccess(request):
 # View History of Bookings.
 @login_required(login_url='/owner-login')
 def owner_view_booking(request):
-    a = BookingAmenity.objects.filter(uid = request.user.id)
+    a = BookingAmenity.objects.filter(uid = request.user.id).order_by('-booking_date')
     context={}
     context['data']=a
     return render(request, 'owner-view-booking.html', context)
@@ -434,7 +435,7 @@ def owner_view_booking(request):
 def cancelbooking(request,id):
     context={}
     a = BookingAmenity.objects.filter(uid = request.user.id, id=id)
-    # print(a)
+    print(a)
     a.delete()
     return redirect('/owner-view-booking')
 
@@ -789,18 +790,39 @@ def admin_delete_amenity(request,aid):
 
 # Edit particular Amenity
 @login_required(login_url='/admin-login')
-def admin_edit_amenity(request,aid):
+def admin_edit_amenity(request, aid):
     if not request.user.is_staff:  # Check if the user is an admin
         return redirect('/admin-login')
     
-    context={}
-    if request.method=='GET':
-        a = Amenity.objects.filter(id=aid)
-        context['data']=a
-        return render(request,'admin-editAmenity.html',context)
-    else:
-        pass
+    context = {}
+    try:
+        amenity = Amenity.objects.get(id=aid)  # Fetch the amenity object
+        
+        if request.method == 'GET':
+            context['data'] = [amenity]  
+        
+        elif request.method == 'POST':
+            if 'amenity' in request.POST:
+                amenity.amenity = request.POST.get('amenity')
+            if 'description' in request.POST:
+                amenity.description = request.POST.get('description')
+            if 'rent' in request.POST:
+                amenity.rent = request.POST.get('rent')
 
+            # Handle image upload if it's provided
+            if 'img' in request.FILES:
+                amenity.img = request.FILES['img']
+            
+            amenity.save()  # Save the updated amenity
+
+            context['successmsg'] = "Amenity updated successfully!"
+            return render(request, 'admin-editAmenity.html', context)
+
+    except Amenity.DoesNotExist:
+        context['errormsg'] = "Amenity not found!"
+        return render(request, 'admin-editAmenity.html', context)
+
+    return render(request, 'admin-editAmenity.html', context)
 
 
 
@@ -811,7 +833,7 @@ def admin_booking(request):
         return redirect('/admin-login')
     
     context={}
-    b = BookingAmenity.objects.all()
+    b = BookingAmenity.objects.all().order_by('-booking_date')
     context['data']=b
     return render(request, 'admin-booking-page.html', context)
 
