@@ -3,7 +3,7 @@
 {% block 'main' %}
 <div class="col-md-10 col-sm-8 mb-2">
     <div class="container admin-amenity-container">
-        <h1 class="admin-amenity-title">Add New Amenity</h1>
+        <h1 class="admin-amenity-title">Edit Amenity</h1>
 
         <!-- Success/Error messages -->
         {% if successmsg %}
@@ -17,7 +17,7 @@
             }, 3000);
         </script>
         {% elif errormsg %}
-        <div id="error" class="alert alert-danger admin-amenity-danger" role="alert">
+        <div id="error" class="alert alert-danger admin-amenity-danger" role="alert" data-redirect-url="/admin-edit-amenity">
             {{ errormsg }}
         </div>
         <script>
@@ -30,37 +30,38 @@
 
         <!-- Amenity Form -->
         {% for i in data %}
-        <form class="admin-amenity-form" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <!-- Amenity Name -->
-            <div class="mb-3 admin-amenity-field">
-                <label for="amenityName" class="form-label admin-amenity-label">Amenity Name</label>
-                <input type="text" class="form-control admin-amenity-input" id="amenityName" name="amenity" placeholder="Enter amenity name" value="{{i.amenity}}">
-            </div>
+<form class="admin-amenity-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <!-- Amenity Name -->
+    <div class="mb-3 admin-amenity-field">
+        <label for="amenityName" class="form-label admin-amenity-label">Amenity Name</label>
+        <input type="text" class="form-control admin-amenity-input" id="amenityName" name="amenity" placeholder="Enter amenity name" value="{{i.amenity}}">
+    </div>
 
-            <!-- Description -->
-            <div class="mb-3 admin-amenity-field">
-                <label for="amenityDescription" class="form-label admin-amenity-label">Description</label>
-                <textarea class="form-control admin-amenity-textarea" id="amenityDescription" name="description" rows="5" placeholder="Enter description of the amenity"> {{i.description}} </textarea>
-            </div>
+    <!-- Description -->
+    <div class="mb-3 admin-amenity-field">
+        <label for="amenityDescription" class="form-label admin-amenity-label">Description</label>
+        <textarea class="form-control admin-amenity-textarea" id="amenityDescription" name="description" rows="5" placeholder="Enter description of the amenity">{{ i.des }}</textarea>
+    </div>
 
-            <!-- Rent -->
-            <div class="mb-3 admin-amenity-field">
-                <label for="amenityRent" class="form-label admin-amenity-label">Rent</label>
-                <input type="number" class="form-control admin-amenity-input" id="amenityRent" name="rent" placeholder="Enter rent amount" value="{{i.rent}}">
-            </div>
+    <!-- Rent -->
+    <div class="mb-3 admin-amenity-field">
+        <label for="amenityRent" class="form-label admin-amenity-label">Rent</label>
+        <input type="number" class="form-control admin-amenity-input" id="amenityRent" name="rent" placeholder="Enter rent amount" value="{{i.rent}}">
+    </div>
 
-            <!-- Image -->
-            <div class="mb-3 admin-amenity-field">
-                <label for="amenityImage" class="form-label admin-amenity-label">Image</label>
-                <input type="file" class="form-control admin-amenity-input" id="amenityImage" name="img">
-            </div>
+    <!-- Image -->
+    <div class="mb-3 admin-amenity-field">
+        <label for="amenityImage" class="form-label admin-amenity-label">Image</label>
+        <input type="file" class="form-control admin-amenity-input" id="amenityImage" name="img">
+    </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary admin-amenity-submit">Add Amenity</button>
-        </form>
-        {% endfor %}
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary admin-amenity-submit">Submit</button>
+</form>
+{% endfor %}
+
     </div>
 </div>
 {% endblock 'main' %}

@@ -17,9 +17,15 @@
             }, 3000);
         </script>
         {% elif errormsg %}
-        <div id="error" class="alert alert-danger admin-amenity-danger" role="alert">
+        <div id="error" class="alert alert-danger admin-amenity-danger" role="alert" data-redirect-url="/admin-add-amenity">
             {{ errormsg }}
         </div>
+        <script>
+            // Redirect after 5 seconds
+            setTimeout(function() {
+                window.location.href = document.getElementById("error").getAttribute("data-redirect-url");
+            }, 3000);
+        </script>
         {% endif %}
 
         <!-- Amenity Form -->
