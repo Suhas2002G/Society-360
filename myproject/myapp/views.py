@@ -13,6 +13,7 @@ import razorpay
 from django.core.mail import send_mail 
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from twilio.rest import Client
 
 
 # index page
@@ -634,6 +635,20 @@ def admin_add_notice(request):
             try:
                 Notice.objects.create(title=title, category=cat, des=des, priority=priority)
                 context['successmsg'] = 'Notice has been successfully posted..!'
+
+                
+                # Twilio SMS Integration
+                account_sid = os.getenv('ACCOUNT_SID')
+                auth_token = os.getenv('AUTH_TOKEN')
+                client = Client(account_sid, auth_token)
+
+                message = client.messages.create(
+                from_=os.getenv('TWILIO_PHONE_NUMBER'),
+                body='Admin Alert : A new notice has been added. Please check for details.',
+                to='+917755994279'
+                )
+                print(message.sid)
+
             except Exception:
                 context['errormsg'] = 'An error occurred. Please try again later.'
         return render(request, 'admin-addnotice.html', context)
