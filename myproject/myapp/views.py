@@ -618,14 +618,15 @@ def admin_add_notice(request):
         return render(request, 'admin-addnotice.html', context)
     else:
         title = request.POST['title']
-        cat = request.POST.get('category')  # MultiValueDictKeyError
+        #cat = request.POST['category']  
+        cat = request.POST.get('category')  
         des = request.POST['description']
-        priority = request.POST.get('category')
+        priority = request.POST.get('priority')
 
-        print(title)
-        print(cat)
-        print(des)
-        print(priority)
+        # print(title)
+        # print(cat)
+        # print(des)
+        # print(priority)
 
         if not title or not cat or not des or not priority:
             context['errormsg'] = 'Please fill all the fields'
