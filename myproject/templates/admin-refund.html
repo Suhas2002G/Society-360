@@ -1,0 +1,62 @@
+{% extends 'admin-base.html' %}
+{% load static %}
+{% block 'main' %}
+<div class="col-md-10 col-sm-8 mb-2">
+    <div class="container admin-usermanage-container">
+        <a href="/admin-maintenance" style="color: black;"><h1 class="admin-usermanage-title">Refund Dashboard</h1></a>
+        
+        <!-- Success/Error messages -->
+        {% if successmsg %}
+        <div id="success" class="alert alert-success admin-usermanage-success" role="alert">
+            {{ successmsg }}
+        </div>
+        {% elif errormsg %}
+        <div id="error" class="alert alert-danger admin-usermanage-danger" role="alert">
+            {{ errormsg }}
+        </div>
+        {% endif %}
+
+
+
+        <!-- Check if data exists -->
+        {% if data %}
+        <!-- User Table -->
+        <table class="table admin-usermanage-table">
+            <thead>
+                <tr>
+                    <th scope="col">Owner Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Payment Date</th>
+                    <th scope="col">Payment ID</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in data %}
+                <tr>
+                    <td>{{ i.uid.first_name }}</td>
+                    <td>{{ i.uid.email }}</td>
+                    <td>{{i.payment_date}}</td>
+                    <td></td>
+                    <td>{{ i.amount }}</td>
+                    <td>{{ i.status }}</td>
+                    <td><input type="checkbox" name="" id=""></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            No records found.
+        </div>
+
+        {% endif %}
+
+        
+    </div>
+</div>
+{% endblock 'main' %}

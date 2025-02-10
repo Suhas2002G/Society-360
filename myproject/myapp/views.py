@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
-from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Otp
+from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Otp, Refund
 from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
@@ -233,6 +233,9 @@ def makepayment(request):
     RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
     RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
 
+    print(RAZORPAY_API_KEY)
+    print(RAZORPAY_API_PASS)
+
     amt = 1000
     client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
 
@@ -241,7 +244,10 @@ def makepayment(request):
     data = { "amount": amt, "currency": "INR", "receipt": "order_rcptid_11" }
     payment = client.order.create(data=data)
     context['payment']=payment
-    
+
+    print(payment)
+
+    context['RAZORPAY_API_KEY']=RAZORPAY_API_KEY
     return render(request, 'pay.html', context)
     
 
@@ -302,50 +308,6 @@ def owner_book_amenity(request):
 
 
 
-# Owner Booking Amenity
-# @login_required(login_url='/owner-login')
-# def bookAmenity(request, aid):
-#     if request.method == 'GET':
-#         b_date = request.GET.get('booking_date')  # Get the booking date from query parameters
-#         context = {}
-
-#         # Check if the amenity is already booked on the given date
-#         existing_booking = BookingAmenity.objects.filter(aid=aid, booking_date=b_date).exists()
-
-#         if existing_booking:
-#             context['errormsg'] = "Amenity is booked by someone for the selected date."
-#             return render(request, 'owner-bookamenity.html', context)
-#         else:
-#             # Proceed with booking if not already booked
-#             a = Amenity.objects.get(id=aid)
-#             amount = a.rent
-
-#             RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
-#             RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
-
-#             amt = int(float(amount) * 100)  # Convert to paise
-#             client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
-
-#             # Create payment order
-#             data = {"amount": amt, "currency": "INR", "receipt": f"order_rcptid_{aid}"}
-#             payment = client.order.create(data=data)
-#             context['payment'] = payment
-
-#             # Insert a record into the BookingAmenity model
-#             booking_data = {
-#                 'uid': request.user,
-#                 'booking_date': b_date,
-#                 'payment_date': timezone.now().date(),
-#                 'amount': amount,
-#                 'aid': a,
-#             }
-
-#             BookingAmenity.objects.create(**booking_data)
-
-#             context['success_message'] = "Amenity booked successfully!"
-#             return render(request, 'amenitypay.html', context)
-
-#     return HttpResponse("Invalid request method.", status=405)
 
 @login_required(login_url='/owner-login')
 def bookAmenity(request, aid):
@@ -376,6 +338,9 @@ def bookAmenity(request, aid):
             RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
             RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
 
+            print(RAZORPAY_API_KEY)
+            print(RAZORPAY_API_PASS)
+
             amt = int(float(amount) * 100)  # Convert to paise
             client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
 
@@ -383,7 +348,7 @@ def bookAmenity(request, aid):
             data = {"amount": amt, "currency": "INR", "receipt": f"order_rcptid_{aid}"}
             payment = client.order.create(data=data)
             context['payment'] = payment
-            
+            context['RAZORPAY_API_KEY']=RAZORPAY_API_KEY
 
             # Insert a record into the BookingAmenity model
             booking_data = {
@@ -435,8 +400,18 @@ def owner_view_booking(request):
 
 def cancelbooking(request,id):
     context={}
-    a = BookingAmenity.objects.filter(uid = request.user.id, id=id)
+    a = BookingAmenity.objects.filter(uid = request.user.id, id=id).first()
     print(a)
+
+    # load record into refund table
+    Refund.objects.create(
+        uid=a.uid,
+        aid=a.aid,
+        amount=a.amount,  
+        payment_date=a.payment_date,
+        status='Pending'  #default pending
+    )
+
     a.delete()
     return redirect('/owner-view-booking')
 
@@ -635,8 +610,7 @@ def admin_add_notice(request):
             try:
                 Notice.objects.create(title=title, category=cat, des=des, priority=priority)
                 context['successmsg'] = 'Notice has been successfully posted..!'
-
-                
+ 
                 # Twilio SMS Integration
                 account_sid = os.getenv('ACCOUNT_SID')
                 auth_token = os.getenv('AUTH_TOKEN')
@@ -865,3 +839,17 @@ def admin_manage_complaint(request):
     c = Complaint.objects.all().order_by('-created_at')
     context['data']=c 
     return render(request, 'admin-manage-complaint.html', context)
+
+
+
+
+# Refund Process
+@login_required(login_url='/admin-login')
+def refund(request):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    context={}
+    r = Refund.objects.all()
+    context['data']=r
+    return render(request, 'admin-refund.html', context)

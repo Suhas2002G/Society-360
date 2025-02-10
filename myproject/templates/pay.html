@@ -35,7 +35,8 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 var options = {
-    "key": "rzp_test_c66P03WlENQIxJ", // Enter the Key ID generated from the Dashboard
+    //"key": "rzp_test_c66P03WlENQIxJ", // Enter the Key ID generated from the Dashboard
+    "key": "{{RAZORPAY_API_KEY}}",
     "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Society-360",
@@ -44,9 +45,9 @@ var options = {
     "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
     "prefill": {
-        "name": "Gaurav Kumar",
-        "email": "gaurav.kumar@example.com",
-        "contact": "9000090000"
+        "name": "Suhas Gondukupi",
+        "email": "suhas8838@example.com",
+        "contact": "7755994279"
     },
     "notes": {
         "address": "Razorpay Corporate Office"
@@ -59,12 +60,16 @@ var options = {
         window.location.href='/paymentsuccess'        // inserted for move from one add to another
     }
 };
+console.log(options.key)
 var rzp1 = new Razorpay(options);
 document.getElementById('rzp-button1').onclick = function(e){
     rzp1.open();
     e.preventDefault();
 
 }
+
+
+
 </script>
 
 {% endblock 'main' %}
