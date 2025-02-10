@@ -44,6 +44,7 @@ urlpatterns = [
     path('admin-viewnotice', views.admin_view_notice),
     path('admin-booking', views.admin_booking),
     path('admin-manage-complaint', views.admin_manage_complaint),
+    path('refund', views.refund),
     
 ]
 urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

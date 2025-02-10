@@ -1,5 +1,5 @@
 from django.contrib import admin
-from myapp.models import Flat, MaintenancePayment, BookingAmenity, Complaint, Notice, Amenity
+from myapp.models import Flat, MaintenancePayment, BookingAmenity, Complaint, Notice, Amenity, Refund
 
 # Register your models here.
 
@@ -39,6 +39,12 @@ class AmenityAdmin(admin.ModelAdmin):
     search_fields = ('amenity',)
     list_filter = ('rent',)
 
+# Refund model registration
+class RefundAdmin(admin.ModelAdmin):
+    list_display = ('uid', 'aid', 'amount', 'payment_date','status')
+    search_fields = ('status','payment_date')
+    list_filter = ('status','payment_date')
+
 
 admin.site.register(Flat,FlatAdmin) 
 admin.site.register(MaintenancePayment,MaintenancePaymentAdmin) 
@@ -46,3 +52,4 @@ admin.site.register(BookingAmenity,BookingAmenityAdmin)
 admin.site.register(Complaint,ComplaintAdmin) 
 admin.site.register(Notice,NoticeAdmin) 
 admin.site.register(Amenity,AmenityAdmin) 
+admin.site.register(Refund,RefundAdmin) 

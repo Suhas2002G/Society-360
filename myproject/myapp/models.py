@@ -31,12 +31,17 @@ class BookingAmenity(models.Model):
 
 
 # for refund purpose [after amenity cancellationn]
-# class Refund(models.Model):
-#     uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
-#     aid = models.ForeignKey('Amenity', on_delete=models.CASCADE, db_column='aid')  
-#     amount= models.DecimalField(max_digits=10, decimal_places=2)
-#     payment_date = models.DateField()
-#     payment_id = models.CharField(max_length=50)
+class Refund(models.Model):
+    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    aid = models.ForeignKey('Amenity', on_delete=models.CASCADE, db_column='aid')  
+    amount= models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField()
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved')
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+#   payment_id = models.CharField(max_length=50)
 
 
 # Complaint Model
