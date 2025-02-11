@@ -348,6 +348,9 @@ def bookAmenity(request, aid):
             data = {"amount": amt, "currency": "INR", "receipt": f"order_rcptid_{aid}"}
             payment = client.order.create(data=data)
             context['payment'] = payment
+            print(payment)
+            payment_id = payment['id']
+            print(payment_id)
             context['RAZORPAY_API_KEY']=RAZORPAY_API_KEY
 
             # Insert a record into the BookingAmenity model
@@ -357,6 +360,7 @@ def bookAmenity(request, aid):
                 'payment_date': timezone.now().date(),
                 'amount': amount,
                 'aid': a,
+                'payment_id': payment_id
             }
 
             BookingAmenity.objects.create(**booking_data)
@@ -409,7 +413,8 @@ def cancelbooking(request,id):
         aid=a.aid,
         amount=a.amount,  
         payment_date=a.payment_date,
-        status='Pending'  #default pending
+        status='Pending',  #default pending
+        payment_id = a.payment_id
     )
 
     a.delete()
@@ -853,3 +858,17 @@ def refund(request):
     r = Refund.objects.all()
     context['data']=r
     return render(request, 'admin-refund.html', context)
+
+
+
+# Refund Process
+@login_required(login_url='/admin-login')
+def changeStatus(request,id):
+    if not request.user.is_staff:  # Check if the user is an admin
+        return redirect('/admin-login')
+    
+    c = Refund.objects.get(id=id)
+    c.status='Refunded'
+    c.save()
+
+    return redirect('/refund')

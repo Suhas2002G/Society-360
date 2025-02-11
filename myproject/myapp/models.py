@@ -26,7 +26,7 @@ class BookingAmenity(models.Model):
     booking_date = models.DateField()  
     amount= models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField()
-    # payment_id = models.CharField(max_length=50)
+    payment_id = models.CharField(max_length=50, default='xyz', null=True, blank=True)
 
 
 
@@ -41,7 +41,7 @@ class Refund(models.Model):
         ('Approved', 'Approved')
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-#   payment_id = models.CharField(max_length=50)
+    payment_id = models.CharField(max_length=50,  default='xyz', null=True, blank=True)
 
 
 # Complaint Model

@@ -40,10 +40,14 @@
                     <td>{{ i.uid.first_name }}</td>
                     <td>{{ i.uid.email }}</td>
                     <td>{{i.payment_date}}</td>
-                    <td></td>
+                    <td>{{i.payment_id}}</td>
                     <td>{{ i.amount }}</td>
                     <td>{{ i.status }}</td>
-                    <td><input type="checkbox" name="" id=""></td>
+                    {% if i.status == 'Pending' %}
+                    <td><a href="/changeStatus/{{i.id}}">Update to Refund</a></td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
