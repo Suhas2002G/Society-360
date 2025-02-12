@@ -526,11 +526,12 @@ def admin_dashboard(request):
         noticeCount = Notice.objects.count()
         compCount = Complaint.objects.count()
 
+        # m=MaintenancePayment.objects.filter(payment_date__month=1) # get only Jan records
         mamount = 0
         m=MaintenancePayment.objects.all()
         for i in m:
             mamount += i.amount
-        
+
         context={
             'ocount': ownerCount,
             'ncount' : noticeCount,
