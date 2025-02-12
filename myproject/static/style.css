@@ -642,22 +642,14 @@ footer .social-icons a {
 }
 
 /* Hover effect for nav links */
-.owner-sidebar .s-nav-link:hover {
+.owner-sidebar .s-nav-link:hover,
+.owner-sidebar .s-nav-link.active {
   background-color: #0a2260;
   color: white;
 }
 
-/* Active link with different background */
-/* .owner-sidebar .nav-link.active {
-  background-color: #FF204E;
-  color: #FFF;
-} */
 
-/* Making sure the active link doesn't change text color */
-/* .owner-sidebar .s-nav-link.active:hover {
-  background-color: #A0153E;
-  color: #FFF;
-} */
+
 
 @media (max-width: 768px) {
   .owner-sidebar {
@@ -1058,7 +1050,7 @@ footer .social-icons a {
 */
 
 /* admin-dashboard.html starts here   */
-.admin-dash-sidebar {
+/* .admin-dash-sidebar {
   background-color: #e8f2ff;
   color: #00224D;
   height: 90vh;
@@ -1075,7 +1067,29 @@ footer .social-icons a {
   border-radius: 10px;
   transition: ease-in-out 0.2s;
   
+} */
+.admin-dash-sidebar {
+  background-color: #e8f2ff;
+  color: #00224D;
+  height: 90vh;
+  padding: 1rem;
 }
+
+.admin-dash-sidebar .nav-link {
+  color: #00224D;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-dash-sidebar .nav-link:hover,
+.admin-dash-sidebar .nav-link.active { /* Apply hover styles to active links */
+  color: #FFFFFF;
+  background-color: #00224D;
+  border-radius: 10px;
+  transition: ease-in-out 0.1s;
+}
+
 
 /* Welcome Section */
 .welcome-section {
