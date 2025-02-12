@@ -1,41 +1,81 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block 'main' %}
+{% extends 'base.html' %} {% load static %} {% block 'main' %}
 <div class="owner-home-container">
-    <section class="owner-home-dashboard">
-        <div class="owner-home-welcome-message">
-            <!-- <h4>Welcome, {{user.first_name}}!</h4> -->
-            <h4>Welcome, Owner..!</h4>
-            <p>Here's a quick overview of your society details and activities.</p>
+  <section class="owner-home-dashboard">
+    <div class="owner-home-welcome-message">
+      <!-- <h4>Welcome, {{user.first_name}}!</h4> -->
+      <h4>Welcome, Owner..!</h4>
+      <!-- <p>Today's date is: {% now "F j, Y h:i A" %}</p> -->
+      <p>Here's a quick overview of your society details and activities.</p>
+    </div>
+  </section>
+
+
+  
+
+
+
+
+
+  <div class="owner-h-new-container">
+    <!-- Third Card: Digital Notice Board -->
+    <div class="owner-h-new-card">
+        <div class="owner-h-new-img">
+          <img
+            alt="No_Image"
+            src="https://img.freepik.com/free-vector/push-notifications-concept-illustration_114360-4730.jpg?t=st=1739363205~exp=1739366805~hmac=f10111d3a6a8115f4719447da96f6ecef20f7f40770f32d5db50f6923ff9bccd&w=1060"
+            class="owner-h-new-img"
+          />
         </div>
-    </section> 
+        <h2 class="owner-h-new-heading">Digital Notice Board</h2>
+        <div class="owner-h-new-description">
+            Digital notice board to display society announcements, events, and notices.
+            You can view notices related to meetings, society events, maintenance schedules, etc.
+            Notifications for new notices to all members.
+        </div>
+      </div>
 
 
-        <!-- Features Section -->
-        <section id="features" class="home-features">
-            <div class="home-features-container">
-                <div class="home-feature">
-                    <img src="{% static 'images/sm1.png' %}" alt="Feature 1" class="home-feature-icon">
-                    <h3 class="home-feature-title">Smart Management</h3>
-                    <p class="home-feature-description">Easily manage your society with advanced tools to track payments, notices, and events.</p>
-                </div>
-                <div class="home-feature">
-                    <img src="https://images.herzindagi.info/image/2022/Sep/How-to-make-online-payments-safe.jpg" alt="Feature 2" class="home-feature-icon">
-                    <!-- <img src="{% static 'images/feature2.svg' %}" alt="Feature 2" class="home-feature-icon"> -->
-                    <h3 class="home-feature-title">Online Payments</h3>
-                    <p class="home-feature-description">Make online payments for maintenance fees and other services directly from the portal.</p>
-                </div>
-                <div class="home-feature">
-                    <img src="https://2.imimg.com/data2/KN/UQ/MY-2779493/25residential-projects-of-t-500x500-500x500.jpg" alt="Feature 3" class="home-feature-icon">
-                    <h3 class="home-feature-title">Community Building</h3>
-                    <p class="home-feature-description">Foster a sense of community with discussion boards, events, and easy communication among residents.</p>
-                </div>
-            </div>
-        </section>
-        
+    <!-- First Card: Forum -->
+    <div class="owner-h-new-card">
+      <div class="owner-h-new-img">
+        <img
+          alt="No_Image"
+          src="https://img.freepik.com/free-vector/paying-bills-concept-illustration_114360-22927.jpg?t=st=1739363322~exp=1739366922~hmac=a6d766022941a5cc0129a83a776c963297922d88010f22abd762dc9044a824ac&w=1060"
+          class="owner-h-new-img"
+        />
+      </div>
+      <h2 class="owner-h-new-heading">Monthly Maintenance</h2>
+      <div class="owner-h-new-description">
+        Easily manage your payments by paying your monthly maintenance charges online, saving time and effort.
+No more manual transactions! Pay securely from anywhere, anytime using your preferred payment method.
+      </div>
+    </div>
+
+    <!-- Second Card: Chat with Fellow Community Members -->
+    <div class="owner-h-new-card">
+      <div class="owner-h-new-img">
+        <img
+          alt="No_Image"
+          src="https://img.freepik.com/free-vector/schedule-concept-illustration_114360-1531.jpg?t=st=1739363486~exp=1739367086~hmac=ec1f9fdb351ec838ad7783feab6e5684772a9f38b57605409ac87720995303d6&w=1060"
+          class="owner-h-new-img"
+        />
+      </div>
+      <h2 class="owner-h-new-heading">Complaints and Suggestions</h2>
+      <div class="owner-h-new-description">
+        Members can raise complaints or suggestions directly to society management.
+Categories for different issues (e.g., maintenance issues, security concerns, general feedback).
+      </div>
+    </div>
+
     
+  </div>
+
+
+
+
+  
+  
+  
 </div>
 
 {% endblock 'main' %}
-

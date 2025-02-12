@@ -671,6 +671,7 @@ footer .social-icons a {
   margin: 0 auto;
   padding: 10px;
 
+
 }
 
 /* Owner Home Dashboard */
@@ -1022,6 +1023,52 @@ footer .social-icons a {
 
 
 
+/* Set the display of the container to flex to arrange items in a row */
+.owner-h-new-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Set styles for each individual card */
+.owner-h-new-card {
+  /* background-color: #ffffff; */
+  border-radius: 8px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  width: 30%;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for each card */
+.owner-h-new-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Image styling inside each card */
+.owner-h-new-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: none;
+}
+
+/* Heading styles */
+.owner-h-new-heading {
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 15px;
+}
+
+/* Description text styling */
+.owner-h-new-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 10px;
+}
 
 
 
@@ -1143,73 +1190,7 @@ footer .social-icons a {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Other Dashboard Cards (Reusing Existing Styles) */
-.dashboard-card {
-  background-color: #F5F5F5;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
-.dashboard-card h3 {
-  font-size: 20px;
-  color: #00224D;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.dashboard-card p {
-  font-size: 14px;
-  color: #5D0E41;
-  margin-bottom: 20px;
-}
-
-.dashboard-card .btn {
-  background-color: #FF204E;
-  color: #FFFFFF;
-  padding: 10px 20px;
-  border-radius: 30px;
-  text-transform: uppercase;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.dashboard-card .btn:hover {
-  background-color: #A0153E;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Custom Colors for Each Card */
-.dashboard-card.notices {
-  border-top: 5px solid #FF204E;
-}
-
-.dashboard-card.maintenance {
-  border-top: 5px solid #A0153E;
-}
-
-.dashboard-card.residents {
-  border-top: 5px solid #5D0E41;
-}
-
-.dashboard-card.complaints {
-  border-top: 5px solid #00224D;
-}
-
-.dashboard-card.events {
-  border-top: 5px solid #FF204E;
-}
-
-/* Adjust Button Hover */
-.dashboard-card .btn:hover {
-  background-color: #00224D;
-}
 
 
 /* admin-dashboard.html ends here   */

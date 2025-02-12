@@ -6,7 +6,7 @@
     <!-- Welcome Section -->
     <div class="welcome-section">
         <h1 class="dashboard-title">Welcome, Admin</h1>
-        <p class="dashboard-subtitle">Today is {{ current_date }}. Stay on top of your tasks!</p>
+        <!-- <p class="dashboard-subtitle">Today is {{ current_date }}. Stay on top of your tasks!</p> -->
     </div>
 
     <!-- Quick Stats Section -->
@@ -33,52 +33,48 @@
         </div>
 
     </div>
-
-    <!-- Dashboard Cards Section -->
-    <!-- <div class="row dashboard-sections">
-        <div class="col-md-4">
-            <div class="dashboard-card notices">
-                <h3>Notices</h3>
-                <p>Manage and view society notices.</p>
-                <a href="/admin-notices" class="btn btn-primary">View Notices</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="dashboard-card maintenance">
-                <h3>Maintenance Payments</h3>
-                <p>Track and update maintenance payments.</p>
-                <a href="/admin-maintenance" class="btn btn-primary">Manage Payments</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="dashboard-card residents">
-                <h3>Residents</h3>
-                <p>Manage resident information and access details.</p>
-                <a href="/admin-residents" class="btn btn-primary">Manage Residents</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row dashboard-sections">
-        <div class="col-md-4">
-            <div class="dashboard-card complaints">
-                <h3>Complaints</h3>
-                <p>Review and address complaints from residents.</p>
-                <a href="/admin-complaints" class="btn btn-primary">View Complaints</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="dashboard-card events">
-                <h3>Events</h3>
-                <p>Organize and manage society events.</p>
-                <a href="/admin-events" class="btn btn-primary">Manage Events</a>
-            </div>
-        </div>
-    </div> -->
 </div>
+<section id="features" class="home-features">
+    <div class="home-features-container">
+      <div class="home-feature">
+        <img
+          src="{% static 'images/sm1.png' %}"
+          alt="Feature 1"
+          class="home-feature-icon"
+        />
+        <h3 class="home-feature-title">Smart Management</h3>
+        <p class="home-feature-description">
+          Easily manage your society with advanced tools to track payments,
+          notices, and events.
+        </p>
+      </div>
+      <div class="home-feature">
+        <img
+          src="https://images.herzindagi.info/image/2022/Sep/How-to-make-online-payments-safe.jpg"
+          alt="Feature 2"
+          class="home-feature-icon"
+        />
+        <!-- <img src="{% static 'images/feature2.svg' %}" alt="Feature 2" class="home-feature-icon"> -->
+        <h3 class="home-feature-title">Online Payments</h3>
+        <p class="home-feature-description">
+          Make online payments for maintenance fees and other services directly
+          from the portal.
+        </p>
+      </div>
+      <div class="home-feature">
+        <img
+          src="https://2.imimg.com/data2/KN/UQ/MY-2779493/25residential-projects-of-t-500x500-500x500.jpg"
+          alt="Feature 3"
+          class="home-feature-icon"
+        />
+        <h3 class="home-feature-title">Community Building</h3>
+        <p class="home-feature-description">
+          Foster a sense of community with discussion boards, events, and easy
+          communication among residents.
+        </p>
+      </div>
+    </div>
+  </section>
 </div>
 
 
