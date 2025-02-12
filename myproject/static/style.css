@@ -1039,12 +1039,12 @@ footer .social-icons a {
   width: 30%;
   text-align: center;
   padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 /* Hover effect for each card */
 .owner-h-new-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
