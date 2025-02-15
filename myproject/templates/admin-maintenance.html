@@ -11,9 +11,14 @@
             {{ successmsg }}
         </div>
         {% elif errormsg %}
-        <div id="error" class="alert alert-danger admin-usermanage-danger" role="alert">
+        <div id="error" class="alert alert-danger admin-usermanage-danger" role="alert" data-redirect-url="/admin-maintenance">
             {{ errormsg }}
         </div>
+        <script>
+            setTimeout(function() {
+                window.location.href = document.getElementById("error").getAttribute("data-redirect-url");
+            }, 3000);
+        </script>
         {% endif %}
 
 

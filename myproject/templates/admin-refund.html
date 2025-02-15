@@ -25,7 +25,7 @@
             <thead>
                 <tr>
                     <th scope="col">Owner Name</th>
-                    <th scope="col">Email</th>
+                    <!-- <th scope="col">Email</th> -->
                     <th scope="col">Payment Date</th>
                     <th scope="col">Payment ID</th>
                     <th scope="col">Amount</th>
@@ -38,7 +38,7 @@
                 {% for i in data %}
                 <tr>
                     <td>{{ i.uid.first_name }}</td>
-                    <td>{{ i.uid.email }}</td>
+                    <!-- <td>{{ i.uid.email }}</td> -->
                     <td>{{i.payment_date}}</td>
                     <td>{{i.payment_id}}</td>
                     <td>{{ i.amount }}</td>

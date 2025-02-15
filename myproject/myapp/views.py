@@ -338,8 +338,8 @@ def bookAmenity(request, aid):
             RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
             RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
 
-            print(RAZORPAY_API_KEY)
-            print(RAZORPAY_API_PASS)
+            # print(RAZORPAY_API_KEY)
+            # print(RAZORPAY_API_PASS)
 
             amt = int(float(amount) * 100)  # Convert to paise
             client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
