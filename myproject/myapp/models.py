@@ -51,6 +51,7 @@ class Complaint(models.Model):
     category = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='Pending', null=True, blank=True)
 
 
 # To Otp while Forget Password 

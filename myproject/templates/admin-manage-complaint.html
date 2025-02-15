@@ -16,21 +16,26 @@
               <p class="card-text admin-notice-category">
                 <strong>Subject :</strong> {{ i.title }}
               </p>
-              <p class="card-text admin-notice-category">
-                <strong>Category :</strong> {{ i.category }}
-              </p>
-              <p class="card-text admin-notice-priority">
+              <span class="card-text admin-notice-priority">
                 <strong>Raised By :</strong> {{ i.uid.first_name }}
-              </p>
+              </span>
+              <span class="card-text admin-notice-priority mx-4">
+                <strong> Category :</strong> {{ i.category }}
+              </span>
+              <span class="card-text admin-notice-priority mx-4">
+                <strong> Status :</strong> {{ i.status }}
+              </span>
               <p class="card-text admin-notice-description">
                 {{ i.description }}
               </p>
 
               <p class="card-text">
                 <small class="text-muted">
-                  <strong></strong> {{ i.created_at|date:"d-m-Y H:i:s" }}
+                  <strong></strong> {{ i.created_at|date:"d-m-Y h:i:s A" }}
                 </small>
               </p>
+              <!-- to marks complaint as solved  -->
+              <!-- <a href="/solved/{{i.id}}"><span>Mark as Solved</span></a> -->
             </div>
           </div>
         </div>
