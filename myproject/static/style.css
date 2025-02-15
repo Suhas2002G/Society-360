@@ -425,20 +425,20 @@ footer .social-icons a {
 .login-header {
   font-size: 24px;
   font-weight: bold;
-  color: #FF204E;
+  color: #072b5b;
   text-align: center;
   margin-bottom: 30px;
 }
 
 /* Input Fields */
 .input-group {
-  border: 1px solid #A0153E;
+  border: 1px solid #151727;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .input-group-text {
-  background-color: #A0153E;
+  background-color: #072b5b;
   color: #FFFFFF;
   border: none;
 }
@@ -541,7 +541,8 @@ footer .social-icons a {
 .register-header {
   font-size: 28px;
   font-weight: bold;
-  color: #FF204E;
+  /* color: #FF204E; */
+  color: #063b80;
   text-align: center;
   margin-bottom: 20px;
 }
@@ -549,7 +550,8 @@ footer .social-icons a {
 /* Form Labels */
 .form-label {
   font-weight: 600;
-  color: #5D0E41;
+  /* color: #5D0E41; */
+  color: #210e3b;
 }
 
 /* Input Fields */
@@ -567,7 +569,8 @@ footer .social-icons a {
 
 /* Submit Button */
 .btn-custom {
-  background-color: #FF204E;
+  /* background-color: #FF204E; */
+  background-color: #072b5b;
   color: #FFFFFF;
   border: none;
   padding: 12px;
@@ -577,7 +580,8 @@ footer .social-icons a {
 }
 
 .btn-custom:hover {
-  background-color: #A0153E;
+  background-color: #034aa7;
+  color: rgb(255, 255, 255);
 }
 
 /* Alert Box */
