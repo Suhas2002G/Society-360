@@ -618,16 +618,16 @@ def admin_add_notice(request):
                 context['successmsg'] = 'Notice has been successfully posted..!'
  
                 # Twilio SMS Integration
-                account_sid = os.getenv('ACCOUNT_SID')
-                auth_token = os.getenv('AUTH_TOKEN')
-                client = Client(account_sid, auth_token)
+                # account_sid = os.getenv('ACCOUNT_SID')
+                # auth_token = os.getenv('AUTH_TOKEN')
+                # client = Client(account_sid, auth_token)
 
-                message = client.messages.create(
-                from_=os.getenv('TWILIO_PHONE_NUMBER'),
-                body='Admin Alert : A new notice has been added. Please check for details.',
-                to='+917755994279'
-                )
-                print(message.sid)
+                # message = client.messages.create(
+                # from_=os.getenv('TWILIO_PHONE_NUMBER'),
+                # body='Admin Alert : A new notice has been added. Please check it at Society-360 portal for details.',
+                # to='+917755994279'
+                # )
+                # print(message.sid)
 
             except Exception:
                 context['errormsg'] = 'An error occurred. Please try again later.'
