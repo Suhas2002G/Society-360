@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-4)%8pohh=oay45i65ww*^h5o66hkta3y2))w=4l7k@y$2%wjcx
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ["myapp.onrender.com"]
+ALLOWED_HOSTS = ["Society-360.onrender.com"]
 
 # Gmail Integration settings
 EMAIL_HOST='smtp.gmail.com'        #smtp : send mail transfer protocol
