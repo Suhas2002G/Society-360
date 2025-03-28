@@ -1150,7 +1150,8 @@ footer .social-icons a {
 
 .dashboard-title {
   font-size: 36px;
-  color: #426aa8;
+  /* color: #232e63; */
+  color: #FF204E;
   font-weight: bold;
   text-transform: uppercase;
 }
@@ -1806,5 +1807,81 @@ form.d-flex .btn-primary:hover {
 
 
 
+/* Custom CSS with owner-o- prefix */
+.owner-o-sidebar {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #2575fc;
+  color: white;
+  padding-top: 20px;
+}
+.owner-o-content {
+  margin-left: 250px;
+  padding: 20px;
+}
+.owner-o-card {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+.owner-o-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.owner-o-notification {
+  background-color: #f8f9fa;
+  border-left: 4px solid #2575fc;
+}
+.owner-o-quick-stats {
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+  --primary-color: #b5cffc;
+  --secondary-color: #ced9f9;
+  --light-bg: #f4f7fa;
+}
+
+.admin-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.admin-stat-card {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: rgb(19, 9, 74);
+}
+
+.admin-quick-action {
+  background-color: var(--light-bg);
+  border-left: 4px solid var(--primary-color);
+}
+
+.chart-container {
+  height: 300px;
+}
 

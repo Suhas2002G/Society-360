@@ -2,40 +2,33 @@
 <div class="owner-home-container">
   <section class="owner-home-dashboard">
     <div class="owner-home-welcome-message">
-      <!-- <h4>Welcome, {{user.first_name}}!</h4> -->
-      <h4>Welcome, Owner..!</h4>
+      <h4>Welcome, {{user.first_name}}!</h4>
+      <!-- <h4>Welcome, Owner..!</h4> -->
       <!-- <p>Today's date is: {% now "F j, Y h:i A" %}</p> -->
-      <p>Here's a quick overview of your society details and activities.</p>
+      <!-- <p>Here's a quick overview of your society details and activities.</p> -->
     </div>
   </section>
 
 
-  
-
-
-
-
-
+<!--   
   <div class="owner-h-new-container">
-    <!-- Third Card: Digital Notice Board -->
     <div class="owner-h-new-card">
-        <div class="owner-h-new-img">
-          <img
-            alt="No_Image"
-            src="https://img.freepik.com/free-vector/push-notifications-concept-illustration_114360-4730.jpg?t=st=1739363205~exp=1739366805~hmac=f10111d3a6a8115f4719447da96f6ecef20f7f40770f32d5db50f6923ff9bccd&w=1060"
-            class="owner-h-new-img"
-          />
-        </div>
-        <h2 class="owner-h-new-heading">Digital Notice Board</h2>
-        <div class="owner-h-new-description">
-            Digital notice board to display society announcements, events, and notices.
-            You can view notices related to meetings, society events, maintenance schedules, etc.
-            Notifications for new notices to all members.
-        </div>
+      <div class="owner-h-new-img">
+        <img
+          alt="No_Image"
+          src="https://img.freepik.com/free-vector/push-notifications-concept-illustration_114360-4730.jpg?t=st=1739363205~exp=1739366805~hmac=f10111d3a6a8115f4719447da96f6ecef20f7f40770f32d5db50f6923ff9bccd&w=1060"
+          class="owner-h-new-img"
+        />
       </div>
+      <h2 class="owner-h-new-heading">Digital Notice Board</h2>
+      <div class="owner-h-new-description">
+        Digital notice board to display society announcements, events, and
+        notices. You can view notices related to meetings, society events,
+        maintenance schedules, etc. Notifications for new notices to all
+        members.
+      </div>
+    </div>
 
-
-    <!-- First Card: Forum -->
     <div class="owner-h-new-card">
       <div class="owner-h-new-img">
         <img
@@ -46,12 +39,12 @@
       </div>
       <h2 class="owner-h-new-heading">Monthly Maintenance</h2>
       <div class="owner-h-new-description">
-        Easily manage your payments by paying your monthly maintenance charges online, saving time and effort.
-No more manual transactions! Pay securely from anywhere, anytime using your preferred payment method.
+        Easily manage your payments by paying your monthly maintenance charges
+        online, saving time and effort. No more manual transactions! Pay
+        securely from anywhere, anytime using your preferred payment method.
       </div>
     </div>
 
-    <!-- Second Card: Chat with Fellow Community Members -->
     <div class="owner-h-new-card">
       <div class="owner-h-new-img">
         <img
@@ -62,20 +55,77 @@ No more manual transactions! Pay securely from anywhere, anytime using your pref
       </div>
       <h2 class="owner-h-new-heading">Complaints and Suggestions</h2>
       <div class="owner-h-new-description">
-        Members can raise complaints or suggestions directly to society management.
-Categories for different issues (e.g., maintenance issues, security concerns, general feedback).
+        Members can raise complaints or suggestions directly to society
+        management. Categories for different issues (e.g., maintenance issues,
+        security concerns, general feedback).
       </div>
     </div>
+  </div> -->
 
-    
+
+ <!-- Recent Notifications -->
+ <div class="card mb-4">
+  <div class="card-header">
+    <b>  Recent Notifications</b>
+  </div>
+  <div class="card-body">
+    {% for i in notice %}
+      <div class="owner-o-notification p-3 mb-2">
+          <h6>{{i.title}}</h6>
+          <p class="text-muted">{{i.category}}</p>
+          <small class="text-muted">{{i.created_at}}</small>
+      </div>
+    {% endfor %}
+      <!-- <div class="owner-o-notification p-3 mb-2">
+          <h6>New Notice: Society Meeting</h6>
+          <p class="text-muted">Upcoming society general body meeting on 15th April at 7 PM.</p>
+          <small class="text-muted">Yesterday</small>
+      </div> -->
+  </div>
+</div>
+
+
+
+
+
+<div class="row">
+  <div class="col-md-4">
+      <div class="card owner-o-card">
+          <div class="card-body text-center">
+              <i class="bi bi-credit-card display-4 text-primary mb-3"></i>
+              <h5 class="card-title">Pay Maintenance</h5>
+              <p class="card-text">Pay your monthly maintenance bill</p>
+              <a href="/owner-maintenance" class="btn btn-primary">Pay Now</a>
+          </div>
+      </div>
+  </div>
+  <div class="col-md-4">
+      <div class="card owner-o-card">
+          <div class="card-body text-center">
+              <i class="bi bi-calendar-plus display-4 text-success mb-3"></i>
+              <h5 class="card-title">Book Amenity</h5>
+              <p class="card-text">Book society amenities</p>
+              <a href="/owner-book-amenity" class="btn btn-success">Book Now</a>
+          </div>
+      </div>
+  </div>
+  <div class="col-md-4">
+      <div class="card owner-o-card">
+          <div class="card-body text-center">
+              <i class="bi bi-exclamation-circle display-4 text-danger mb-3"></i>
+              <h5 class="card-title">Raise Complaint</h5>
+              <p class="card-text">Report issues in the society</p>
+              <a href="/owner-raise-complaint" class="btn btn-danger">Raise Complaint</a>
+          </div>
+      </div>
+  </div>
   </div>
 
 
 
 
-  
-  
-  
+
+
 </div>
 
 {% endblock 'main' %}
