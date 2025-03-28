@@ -14,6 +14,8 @@ from django.core.mail import send_mail
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from twilio.rest import Client
+from django.db.models.functions import TruncMonth
+from django.db.models import Sum
 
 
 # index page
@@ -182,6 +184,11 @@ def setPass(request):
 @login_required(login_url='/owner-login')
 def owner_home(request):
     context={}
+    notice = Notice.objects.order_by('-created_at')[:2]
+    print(notice)
+
+    context['notice']=notice
+
     return render(request, 'owner-home.html', context)
 
 
@@ -425,7 +432,7 @@ def cancelbooking(request,id):
 @login_required(login_url='/owner-login')
 def owner_view_complaint(request):
     context={}
-    c = Complaint.objects.filter(uid=request.user.id)
+    c = Complaint.objects.filter(uid=request.user.id).order_by('-created_at')
     print(c)
     context['data']=c 
     return render(request, 'owner-view-complaint.html', context)
@@ -539,6 +546,30 @@ def admin_dashboard(request):
             'mamount' : mamount,
             'compCount':compCount,
         }
+
+            # Aggregate maintenance payments by month
+        monthly_payments = (
+            MaintenancePayment.objects
+            .annotate(month=TruncMonth('payment_date'))  # Extract month from payment_date
+            .values('month')  # Group by month
+            .annotate(total_amount=Sum('amount'))  # Sum amounts for each month
+            .order_by('month')  # Order by month
+        )
+
+        # Convert QuerySet to lists for JavaScript
+        months = [entry['month'].strftime('%b %Y') for entry in monthly_payments]  # Format: "Jan 2025"
+        amounts = [float(entry['total_amount']) for entry in monthly_payments]
+
+        context = {
+            'ocount': ownerCount,
+            'ncount': noticeCount,
+            'current_date': current_date,
+            'mamount' : mamount,
+            'compCount': compCount,
+            'months': months,  # Pass month labels to template
+            'amounts': amounts,  # Pass corresponding amount data
+        }
+
         return render(request, 'admin-dashboard.html', context)
 
 
@@ -603,7 +634,8 @@ def admin_add_notice(request):
         #cat = request.POST['category']  
         cat = request.POST.get('category')  
         des = request.POST['description']
-        priority = request.POST.get('priority')
+        # priority = request.POST.get('priority')
+        priority = 'None'
 
         # print(title)
         # print(cat)
@@ -618,15 +650,15 @@ def admin_add_notice(request):
                 context['successmsg'] = 'Notice has been successfully posted..!'
  
                 # Twilio SMS Integration
-                # account_sid = os.getenv('ACCOUNT_SID')
-                # auth_token = os.getenv('AUTH_TOKEN')
-                # client = Client(account_sid, auth_token)
+                account_sid = os.getenv('ACCOUNT_SID')
+                auth_token = os.getenv('AUTH_TOKEN')
+                client = Client(account_sid, auth_token)
 
-                # message = client.messages.create(
-                # from_=os.getenv('TWILIO_PHONE_NUMBER'),
-                # body='Admin Alert : A new notice has been added. Please check it at Society-360 portal for details.',
-                # to='+917755994279'
-                # )
+                message = client.messages.create(
+                from_=os.getenv('TWILIO_PHONE_NUMBER'),
+                body='Admin Alert : A new notice has been added. Please check it at Society-360 portal for details.',
+                to='+917755994279'
+                )
                 # print(message.sid)
 
             except Exception:
@@ -670,6 +702,7 @@ def removeOwner(request,id):
 # Admin Maintenance Management
 @login_required(login_url='/admin-login')
 def admin_maintenance(request):
+    '''Admin Maintenance Management'''
     if not request.user.is_staff:  # Check if the user is an admin
         return redirect('/admin-login')
     
