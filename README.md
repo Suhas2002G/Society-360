@@ -1,7 +1,7 @@
 # Society 360 - Society Management System
 
 ## Project Title
-"Hello everyone, Society 360, which is a Society Management System designed to make residential community management efficient, streamlined, and hassle-free for both owners and administrators."
+"Hello everyone, Society 360 is a Society Management System designed to make residential community management efficient, streamlined, and hassle-free for both owners and administrators."
 
 ## Objectives
 The main objectives of the Society 360 project are:
