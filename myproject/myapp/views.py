@@ -898,7 +898,7 @@ def refund(request):
 # Refund Process
 @login_required(login_url='/admin-login')
 def changeStatus(request,id):
-    if not request.user.is_staff:  # Check if the user is an admin
+    if not request.user.is_staff:  # Check if the user is an admin or not
         return redirect('/admin-login')
     
     c = Refund.objects.get(id=id)

@@ -31,6 +31,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
+# Ngrok Configuration
+# ALLOWED_HOSTS = [
+#         '*',
+#         '<ngrok_url>.ngrok-free.app'    
+#     ]
+
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = False
+
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://<ngrok_url>.ngrok-free.app'
+# ]
+
+
 # Gmail Integration settings
 EMAIL_HOST='smtp.gmail.com'        #smtp : send mail transfer protocol
 EMAIL_HOST_USER= os.getenv("EMAIL_HOST_USER")
