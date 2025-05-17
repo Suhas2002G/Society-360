@@ -90,6 +90,11 @@ class Amenity(models.Model):
     img = models.ImageField(upload_to='image')
 
 
-
+# OLD DEMO Amenity Model [add]
+# class Amenity(models.Model):
+#     amenity = models.CharField(max_length=100)
+#     des = models.TextField(db_column='description')
+#     rent = models.IntegerField()
+#     img = models.ImageField(upload_to='image')
 
 
