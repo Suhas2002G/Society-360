@@ -37,7 +37,8 @@ def owner_register(request):
         mob=request.POST['mob']
         flatno=request.POST['flatno']
 
-        if uname=='' or ue=='' or p=='' or cp=='' or mob=='' or flatno=='':
+        # if uname=='' or ue=='' or p=='' or cp=='' or mob=='' or flatno=='':
+        if any(field == '' for field in [uname, ue, p, cp, mob, flatno]):
             # print('Please fill all the fields')
             context['errormsg']='Please fill all the fields'
         elif len(p)<8:
