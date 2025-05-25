@@ -91,6 +91,7 @@ class Notice(models.Model):
     priority = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.title
 
@@ -102,6 +103,9 @@ class Amenity(models.Model):
     des = models.TextField(db_column='description')
     rent = models.IntegerField()
     img = models.ImageField(upload_to='image')
+
+    def __str__(self):
+        return self.amenity
 
 
 # OLD DEMO Amenity Model [add]
