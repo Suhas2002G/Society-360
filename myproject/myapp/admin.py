@@ -1,7 +1,15 @@
 from django.contrib import admin
-from myapp.models import Flat, MaintenancePayment, BookingAmenity, Complaint, Notice, Amenity, Refund
+from myapp.models import (
+    Flat,
+    MaintenancePayment,
+    BookingAmenity,
+    Complaint,
+    Notice,
+    Amenity,
+    Refund,
+)
 
-# Register your models here.
+
 
 # Flat model registration
 class FlatAdmin(admin.ModelAdmin):

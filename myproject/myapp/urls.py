@@ -46,6 +46,5 @@ urlpatterns = [
     path('admin-manage-complaint', views.admin_manage_complaint),
     path('refund', views.refund),
     path('changeStatus/<id>', views.changeStatus),
-    
 ]
 urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
