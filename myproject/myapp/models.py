@@ -67,6 +67,9 @@ class Complaint(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='Pending', null=True, blank=True)
 
+    def __str__(self):
+        return self.title
+
 
 # To Otp while Forget Password 
 class Otp(models.Model):
