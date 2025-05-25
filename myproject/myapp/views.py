@@ -631,17 +631,10 @@ def admin_add_notice(request):
     if request.method == 'GET':
         return render(request, 'admin-addnotice.html', context)
     else:
-        title = request.POST['title']
-        #cat = request.POST['category']  
+        title = request.POST['title'] 
         cat = request.POST.get('category')  
         des = request.POST['description']
-        # priority = request.POST.get('priority')
         priority = 'None'
-
-        # print(title)
-        # print(cat)
-        # print(des)
-        # print(priority)
 
         if not title or not cat or not des or not priority:
             context['errormsg'] = 'Please fill all the fields'
