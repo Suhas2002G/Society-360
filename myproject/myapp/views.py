@@ -669,7 +669,7 @@ def admin_usermanage(request):
     
     context = {}
     users = User.objects.filter(is_staff=False) # Fetching users who are not staff (regular users)
-    # print(users)
+    
     # Fetching flat details associated with users
     users_flats = []
     for user in users:
@@ -894,9 +894,7 @@ def refund(request):
 def changeStatus(request,id):
     if not request.user.is_staff:  # Check if the user is an admin or not
         return redirect('/admin-login')
-    
     c = Refund.objects.get(id=id)
     c.status='Refunded'
     c.save()
-
     return redirect('/refund')
