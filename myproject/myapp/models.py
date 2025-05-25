@@ -15,7 +15,8 @@ class Flat(models.Model):
         max_length=10, 
         unique=True, 
         null=True, 
-        blank=True
+        blank=True,
+        help_text='Mobile number should be 10 digit'
         )
     flat_no = models.CharField(
         max_length=10, 
