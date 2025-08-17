@@ -6,23 +6,9 @@ from django.contrib.auth.models import User
 
 # Flat details Model
 class Flat(models.Model):
-    uid=models.ForeignKey(
-        'auth.user', 
-        on_delete=models.CASCADE, 
-        db_column='uid'
-        )
-    mobile = models.CharField(
-        max_length=10, 
-        unique=True, 
-        null=True, 
-        blank=True,
-        help_text='Mobile number should be 10 digit'
-        )
-    flat_no = models.CharField(
-        max_length=10, 
-        null=True, 
-        blank=True
-        )
+    uid=models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    mobile = models.CharField(max_length=10, unique=True, null=True, blank=True, help_text='Mobile number should be 10 digit')
+    flat_no = models.CharField(max_length=10, null=True, blank=True)
 
 
 # Maintenance Payment Model
