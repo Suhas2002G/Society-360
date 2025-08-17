@@ -107,7 +107,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'society360',    # Database name
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Suhas10th90.60%',
         'HOST': 'localhost',
         'PORT': '3306',
     }
