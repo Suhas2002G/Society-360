@@ -1,0 +1,2 @@
+WARNING 2025-10-13 19:47:14,303 views This flat's owner is already registered
+WARNING 2025-10-13 19:50:25,023 views IntegrityError during registration: (1062, "Duplicate entry 'suhas8838@gmail.com' for key 'auth_user.username'")
