@@ -2,10 +2,13 @@ from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
+from django.db import IntegrityError, transaction
+from django.core.exceptions import ValidationError
 from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Otp, Refund
 from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
+import logging
 import os
 import datetime
 import random
@@ -17,51 +20,97 @@ from twilio.rest import Client
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
 
+# Initialize logger for this module
+logger = logging.getLogger(__name__)
 
 # index page
 def home(request):
     return render(request,'home.html')
 
 
-# New User Registration
+
+#----------------------------------------
+#       AUTHENTICATION
+#----------------------------------------
+
 def owner_register(request):
+    """
+    Handle registration of flat owners.
+
+    HTTP requests:
+    - GET: Render the registration form.
+    - POST: Validate form input, create a User and associated Flat record.
+
+    Returns:
+        HttpResponse: Rendered registration page with success or error message.
+    """
     context={}
+
+    # If GET request, just render the registration form
     if request.method == 'GET':
         return render(request,'owner-register.html')
-    else:
-        uname=request.POST['uname']
-        ue=request.POST['uemail']
-        p=request.POST['upass']
-        cp=request.POST['ucpass']
-
-        mob=request.POST['mob']
-        flatno=request.POST['flatno']
-
-        # if uname=='' or ue=='' or p=='' or cp=='' or mob=='' or flatno=='':
-        if any(field == '' for field in [uname, ue, p, cp, mob, flatno]):
-            # print('Please fill all the fields')
-            context['errormsg']='Please fill all the fields'
-        elif len(p)<8:
-            # print('Password must be atleast 8 character')
-            context['errormsg']='Password must be atleast 8 character'
-        elif p!=cp:
-            context['errormsg']='Password and Confirm password must be same'
-        # check whether entered flat no is already present or not in table
-        elif Flat.objects.filter(flat_no=flatno).exists():
-            context['errormsg']="This Flat's Owner is already Registered "
-        else:
-            try:
-                u=User.objects.create(username=ue,email=ue,first_name=uname)
-                u.set_password(p)  # set_password : To convert password into encripted form
-                u.save()
-                f=Flat.objects.create(mobile=mob,flat_no=flatno,uid=u)
-                f.save
-                context['success']='User Created Successfully'
-            except Exception:
-                context['errormsg']='User Already Exists'
-
-        return render(request,'owner-register.html',context)
     
+    # Extract POST data safely using `.get()` to avoid KeyError
+    uname = request.POST.get('uname', '').strip()
+    email = request.POST.get('uemail', '').strip()
+    password = request.POST.get('upass', '').strip()
+    confirm_password = request.POST.get('ucpass', '').strip()
+    mobile = request.POST.get('mob', '').strip()
+    flat_no = request.POST.get('flatno', '').strip()
+
+    # Validate input fields
+    if not all([uname, email, password, confirm_password, mobile, flat_no]):
+        context['errormsg'] = 'Please fill all the fields.'
+        return render(request, 'owner-register.html', context)
+
+    if len(password) < 8:
+        context['errormsg'] = 'Password must be at least 8 characters long.'
+        return render(request, 'owner-register.html', context)
+
+    if password != confirm_password:
+        context['errormsg'] = 'Password and Confirm Password must match.'
+        return render(request, 'owner-register.html', context)
+
+    # Check if flat already registered
+    if Flat.objects.filter(flat_no=flat_no).exists():
+        logger.warning(f"This flat's owner is already registered")
+        context['errormsg'] = "This flat's owner is already registered."
+        return render(request, 'owner-register.html', context)
+
+    # Attempt to create user and flat atomically
+    try:
+        # Used transaction.atomic() to ensure both user and flat are created together
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                first_name=uname,
+                password=password  # Django handles hashing automatically
+            )
+            Flat.objects.create(
+                uid=user,
+                mobile=mobile,
+                flat_no=flat_no
+            )
+
+        context['success'] = 'User registered successfully.'
+    
+    except IntegrityError as e:
+        logger.warning(f"IntegrityError during registration: {e}")
+        context['errormsg'] = 'User with this email already exists.'
+
+    except ValidationError as e:
+        logger.error(f"ValidationError: {e.messages}")
+        context['errormsg'] = f'Invalid data: {e.messages[0]}'
+
+    except Exception as e:
+        logger.exception("Unexpected error during owner registration")
+        context['errormsg'] = 'Unexpected error occurred. Please try again later.'
+
+
+    return render(request, 'owner-register.html', context)
+    
+
 
 # User Login
 def owner_login(request):

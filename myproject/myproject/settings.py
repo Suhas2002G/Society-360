@@ -113,9 +113,52 @@ DATABASES = {
     }
 }
 
+import colorlog
 
-
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'colored': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': '%(log_color)s%(levelname)-8s%(reset)s %(cyan)s%(asctime)s%(reset)s - %(blue)s%(name)s:%(lineno)d%(reset)s - %(white)s%(message)s',
+            'log_colors': {
+                'DEBUG': 'bold_cyan',
+                'INFO': 'green',
+                'WARNING': 'yellow',
+                'ERROR': 'red',
+                'CRITICAL': 'bold_red,bg_white',
+            },
+        },
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'colored',  # 👈 use colored formatter here
+        },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django_app.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+        'myapp': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
