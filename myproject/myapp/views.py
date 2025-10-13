@@ -104,7 +104,7 @@ def owner_register(request):
         context['errormsg'] = f'Invalid data: {e.messages[0]}'
 
     except Exception as e:
-        logger.exception("Unexpected error during owner registration")
+        logger.error("Unexpected error during owner registration")
         context['errormsg'] = 'Unexpected error occurred. Please try again later.'
 
     return render(request, 'owner-register.html', context)
@@ -152,7 +152,7 @@ def owner_login(request):
             logger.warning(f"Failed login attempt for email: {email}")
             return render(request, 'owner-login.html', context)
     except Exception as e:
-        logger.exception(f"Unexpected error during login for email '{email}': {e}")
+        logger.error(f"Unexpected error during login for email '{email}': {e}")
         context['errormsg'] = 'An unexpected error occurred. Please try again later.'
         return render(request, 'owner-login.html', context)
 
@@ -172,7 +172,7 @@ def owner_logout(request):
         logout(request)  # Clear the session
         logger.info(f"User '{user_email}' logged out successfully.")
     except Exception as e:
-        logger.exception(f"Unexpected error during logout: {e}")
+        logger.error(f"Unexpected error during logout: {e}")
 
     return redirect('/')
 
@@ -291,7 +291,7 @@ def owner_home(request):
         notices = Notice.objects.order_by('-created_at')[:2]
         context['notice']=notices
     except Exception as e:
-        logger.exception(f"Error fetching notices for owner: {e}")
+        logger.error(f"Error fetching notices for owner: {e}")
         context['errormsg'] = "Unable to load notices at this time. Please try again later."
     
     return render(request, 'owner-home.html', context)
@@ -323,13 +323,16 @@ def owner_notice(request):
         logger.info(f"Notices fetched: {notices.count()}")
 
     except Exception as e:
-        logger.exception(f"Error fetching notices for owner: {e}")
+        logger.error(f"Error fetching notices for owner: {e}")
         context['errormsg'] = "Unable to load notices at this time. Please try again later."
 
     return render(request, 'owner-notice.html', context)
 
 
 
+#----------------------------------------
+#       MAINTENANCE SECTION [PENDING]
+#----------------------------------------
 
 # Owner Maintenance Payment
 @login_required(login_url='/owner-login')
@@ -427,16 +430,33 @@ def paymentsuccess(request):
 
 
 
+#----------------------------------------
+#       AMENITY BOOKING SECTION PAGE
+#----------------------------------------
 
 # Owner View Book Amenity
 @login_required(login_url='/owner-login')
 def owner_book_amenity(request):
+    """
+    Display all available amenities for the owner to book.
+
+    Fetches all Amenity objects and passes them to the
+    'owner-bookamenity.html' template.
+
+    Returns:
+        HttpResponse: Rendered template with amenities context.
+    """
     context={}
+
     try:
-        amenities = Amenity.objects.all()  # Fetching all amenities
+        # Fetch all amenities
+        amenities = Amenity.objects.all()  
         context['amenities'] = amenities
-    except Exception :
-        context['errormsg'] = "No Amenities Found "
+        logger.info(f"Total amenities: {amenities.count()}")
+
+    except Exception as e:
+        logger.error(f"Error fetching amenities: {e}")
+        context['errormsg'] = "No amenities found at this time."
 
     return render(request, 'owner-bookamenity.html', context)
 
