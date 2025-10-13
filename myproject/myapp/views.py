@@ -107,31 +107,73 @@ def owner_register(request):
         logger.exception("Unexpected error during owner registration")
         context['errormsg'] = 'Unexpected error occurred. Please try again later.'
 
-
     return render(request, 'owner-register.html', context)
     
 
 
-# User Login
 def owner_login(request):
+    """
+    Handle login functionality for flat owners.
+
+    HTTP Methods:
+        - GET  : Render the login form.
+        - POST : Validate user credentials and authenticate the user.
+
+    Returns HttpResponse:
+        - Renders 'owner-login.html' with error messages if login fails.
+        - Redirects to '/owner-home' if authentication succeeds.
+    """
     context={}
+
+    # Handle GET request (display login form)
     if request.method == 'GET':
         return render(request,'owner-login.html')
-    else:
-        e=request.POST['ue']
-        p=request.POST['upass']
-        u=authenticate(username=e,password=p) # For Authentication Purpose
-        if u is not None:
-            login(request,u)        # Login Method
+    
+    # Handle POST request (process login form)
+    try:
+        email = request.POST.get('ue', '').strip()
+        password = request.POST.get('upass', '').strip()
+
+        # Basic validation
+        if not email or not password:
+            context['errormsg'] = 'Please fill in both fields.'
+            logger.warning("Login attempt with empty fields.")
+            return render(request, 'owner-login.html', context)
+        
+        # Authenticate user
+        user = authenticate(username=email, password=password)
+
+        if user is not None:
+            login(request,user)        # Login Method
+            logger.info(f"User '{email}' logged in successfully.")
             return redirect('/owner-home')
         else:
-            context['errormsg']='Invalid Credential'
-            return render(request,'owner-login.html',context)
+            context['errormsg'] = 'Invalid credentials.'
+            logger.warning(f"Failed login attempt for email: {email}")
+            return render(request, 'owner-login.html', context)
+    except Exception as e:
+        logger.exception(f"Unexpected error during login for email '{email}': {e}")
+        context['errormsg'] = 'An unexpected error occurred. Please try again later.'
+        return render(request, 'owner-login.html', context)
 
 
-# User/Admin Logout
+
 def owner_logout(request):
-    logout(request)
+    """
+    Log out the currently authenticated user.
+
+    This view clears the session and redirects to the home page.
+
+    Returns:
+        HttpResponseRedirect: Redirects to '/' after logout.
+    """
+    try:
+        user_email = request.user.email if request.user.is_authenticated else 'Anonymous'
+        logout(request)  # Clear the session
+        logger.info(f"User '{user_email}' logged out successfully.")
+    except Exception as e:
+        logger.exception(f"Unexpected error during logout: {e}")
+
     return redirect('/')
 
 
@@ -228,27 +270,62 @@ def setPass(request):
 
 
 
+#----------------------------------------
+#       OWNER HOME PAGE NOTICE SECTION
+#----------------------------------------
 
-
-# Owner Home Page
 @login_required(login_url='/owner-login')
 def owner_home(request):
+    """
+    Display the Owner Home Page.
+
+    Fetches the latest 2 notices and passes them to the template.
+
+    Returns:
+        HttpResponse: Renders 'owner-home.html' with notice context.
+    """
     context={}
-    notice = Notice.objects.order_by('-created_at')[:2]
-    print(notice)
 
-    context['notice']=notice
-
+    try:
+        # Fetch latest 2 notices ordered by creation date
+        notices = Notice.objects.order_by('-created_at')[:2]
+        context['notice']=notices
+    except Exception as e:
+        logger.exception(f"Error fetching notices for owner: {e}")
+        context['errormsg'] = "Unable to load notices at this time. Please try again later."
+    
     return render(request, 'owner-home.html', context)
 
 
 
+#----------------------------------------
+#       NOTICE SECTION PAGE
+#----------------------------------------
+
 # Notice Board for Owner
 @login_required(login_url='/owner-login')
 def owner_notice(request):
-    context={}
-    notices = Notice.objects.all().order_by('-created_at')
-    context['notices'] = notices
+    """
+    Display the notice board for owners.
+
+    Fetches all notices ordered by creation date (most recent first) 
+    and passes them to the 'owner-notice.html' template.
+
+    Returns:
+        HttpResponse: Renders 'owner-notice.html' with notices context.
+    """
+    context = {}
+
+    try:
+        # Fetch all notices in descending order of creation date
+        notices = Notice.objects.all().order_by('-created_at')
+        context['notices'] = notices
+        logger.info(f"Notices fetched: {notices.count()}")
+
+    except Exception as e:
+        logger.exception(f"Error fetching notices for owner: {e}")
+        context['errormsg'] = "Unable to load notices at this time. Please try again later."
+
     return render(request, 'owner-notice.html', context)
 
 
