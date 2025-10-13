@@ -138,7 +138,7 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'colored',  # 👈 use colored formatter here
+            'formatter': 'colored',  # use colored formatter here
         },
         'file': {
             'level': 'WARNING',
