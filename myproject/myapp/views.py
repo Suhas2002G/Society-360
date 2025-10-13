@@ -462,7 +462,6 @@ def owner_book_amenity(request):
 
 
 
-
 @login_required(login_url='/owner-login')
 def bookAmenity(request, aid):
     if request.method == 'GET':
@@ -575,6 +574,11 @@ def cancelbooking(request,id):
     return redirect('/owner-view-booking')
 
 
+
+#----------------------------------------
+#       COMPLAINT SECTION PAGE
+#----------------------------------------
+
 # Owner View Complaint
 @login_required(login_url='/owner-login')
 def owner_view_complaint(request):
@@ -583,8 +587,6 @@ def owner_view_complaint(request):
     print(c)
     context['data']=c 
     return render(request, 'owner-view-complaint.html', context)
-
-
 
 
 
@@ -618,8 +620,10 @@ def owner_raise_complaint(request):
 
 
 
+#----------------------------------------
+#       Emergency Contact SECTION PAGE
+#----------------------------------------
 
-# Emergency Contact List
 @login_required(login_url='/owner-login')
 def owner_emerg_contact(request):
     context={}
@@ -720,7 +724,9 @@ def admin_dashboard(request):
         return render(request, 'admin-dashboard.html', context)
 
 
-
+#----------------------------------------
+#       ADMIN NOTICE SECTION 
+#----------------------------------------
 # Admin View Notice
 @login_required(login_url='/admin-login')
 def admin_view_notice(request):
@@ -806,6 +812,9 @@ def admin_add_notice(request):
         return render(request, 'admin-addnotice.html', context)
 
 
+#----------------------------------------
+#       ADMIN OWNER MANAGEMENT SECTION 
+#----------------------------------------
 
 # Admin can do Owner Management
 @login_required(login_url='/admin-login')
@@ -838,6 +847,10 @@ def removeOwner(request,id):
     return redirect('/admin-usermanage')
 
 
+
+#----------------------------------------
+#       ADMIN MAINTENANCE DASHBOARD SECTION 
+#----------------------------------------
 
 # Admin Maintenance Management
 @login_required(login_url='/admin-login')
@@ -889,7 +902,9 @@ def admin_maintenance_filter(request):
 
 
 
-
+#----------------------------------------
+#       ADMIN AMENITY MANAGEMENT SECTION 
+#----------------------------------------
 
 # Admin Add New Amenity
 @login_required(login_url='/admin-login')
@@ -1008,6 +1023,10 @@ def admin_booking(request):
 
 
 
+#----------------------------------------
+#       ADMIN COMPLAINT MANG. SECTION 
+#----------------------------------------
+
 # Complaint Lists
 @login_required(login_url='/admin-login')
 def admin_manage_complaint(request):
@@ -1021,7 +1040,9 @@ def admin_manage_complaint(request):
 
 
 
-
+#----------------------------------------
+#       ADMIN AMOUNT REFUND SECTION 
+#----------------------------------------
 # Refund Process
 @login_required(login_url='/admin-login')
 def refund(request):
