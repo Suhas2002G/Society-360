@@ -20,6 +20,8 @@ from twilio.rest import Client
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
 
+from myproject.myapp.services.notice import NoticeSection
+
 # Initialize logger for this module
 logger = logging.getLogger(__name__)
 
@@ -288,6 +290,7 @@ def owner_home(request):
 
     try:
         # Fetch latest 2 notices ordered by creation date
+        notices = NoticeSection.fetch_latest_notices(limit=2)
         notices = Notice.objects.order_by('-created_at')[:2]
         context['notice']=notices
     except Exception as e:
