@@ -1,23 +1,21 @@
-
-
-
 from myapp.models import Notice
 
 
 class NoticeSection:
-    def __init__(self):
-        pass 
-
+    """
+    Service layer responsible for retrieving Notice objects.
+    """
 
     @staticmethod
-    def fetch_latest_notices(self, limit):
+    def fetch_latest_notices(limit=None):
         """
         Provide latest nth notices
         """
-        try:
+        if limit:
             notices = Notice.objects.order_by('-created_at')[:limit]
-            return notices 
-        except:
-            pass
+        else:
+            notices = Notice.objects.order_by('-created_at')
+        return notices 
+
 
     
