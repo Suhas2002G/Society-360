@@ -5,3 +5,5 @@ WARNING 2025-11-29 20:17:19,842 basehttp "GET /favicon.ico HTTP/1.1" 404 8669
 ERROR 2025-11-29 20:23:04,764 views Error fetching notices for owner: NoticeSection.fetch_latest_notices() missing 1 required positional argument: 'self'
 ERROR 2025-11-29 20:43:13,412 views Error fetching complaints for owner: cannot unpack non-iterable int object
 ERROR 2025-11-29 20:45:07,589 views Error fetching complaints for owner: cannot unpack non-iterable int object
+ERROR 2025-11-29 20:59:22,976 views 
+ERROR 2025-11-29 20:59:44,413 views All fields are required to create a complaint.

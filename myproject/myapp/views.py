@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from twilio.rest import Client
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
+from django.contrib.admin.views.decorators import staff_member_required
 
 # 
 from .services import NoticeSection, ComplaintService
@@ -605,7 +606,7 @@ def owner_view_complaint(request):
         complaints = ComplaintService.fetch_complaints(user_id=request.user.id)
         context['data']=complaints 
     except Exception as e:
-        logger.error(f"Error fetching complaints for owner: {e}")
+        logger.error(f"Error fetching complaints: {e}")
         context['errormsg'] = "Unable to load complaints at this time. Please try again later."
     return render(request, 'owner-view-complaint.html', context)
 
@@ -614,31 +615,39 @@ def owner_view_complaint(request):
 # Owner can Raise Complaint
 @login_required(login_url='/owner-login')
 def owner_raise_complaint(request):
+    """
+    View for raising a new complaint by the logged-in owner.
+
+    Handles GET requests to display the form and POST requests to submit the complaint.
+    Returns the appropriate response depending on success or validation failure.
+    """
     context={}
+
     if request.method == 'GET':
         return render(request, 'owner-raise-complaint.html')
-    else:
-        t=request.POST['title']
-        cat=request.POST.get('category')  # MultiValueDictKeyError
-        desc=request.POST['description']
+    
+    # POST request:
+    title = request.POST.get("title", "").strip()
+    category = request.POST.get("category", "").strip()
+    description = request.POST.get("description", "").strip()
 
-        print(t)
-        print(cat)
-        print(desc)
-        u = request.user
 
-        if t=='' or cat=='' or desc=='' :
-            print('Please fill all the fields')
-            context['errormsg']='Please fill all the fields'
-        else:
-            try:
-                m=Complaint.objects.create(title=t,category=cat,description=desc,uid=u)
-                m.save()
-                context['success']='Complaint Raised Successfully...!'
-            except Exception:
-                context['errormsg']='Re-try Again'
-        return render(request,'owner-raise-complaint.html',context)
+    try:
+        ComplaintService.create_complaint(
+            title=title,
+            category=category,
+            description=description,
+            user=request.user
+        )
+        context["success"] = "Complaint raised successfully."
+    except ValueError as ve:
+        logger.error(str(ve))
+        context["errormsg"] = str(ve)
+    except Exception as exc:
+        logger.error(f"Error creating complaint: {exc}")
+        context["errormsg"] = "Something went wrong. Please try again later."
 
+    return render(request, "owner-raise-complaint.html", context)
 
 
 #----------------------------------------
@@ -748,38 +757,64 @@ def admin_dashboard(request):
 #----------------------------------------
 #       ADMIN NOTICE SECTION 
 #----------------------------------------
+
 # Admin View Notice
-@login_required(login_url='/admin-login')
+@staff_member_required(login_url='/admin-login')
 def admin_view_notice(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
+    """
+    Admin view for displaying all notices.
+
+    Retrieves all notices (ordered newest first) using the NoticeService layer
+    and renders them in the admin notice list page. If any error occurs during
+    fetching, it logs the error and sends a safe fallback message to the UI.
+
+    Args:
+        request (HttpRequest): The incoming request instance from the admin user.
+
+    Returns:
+        HttpResponse: Renders `admin-viewnotice.html` with notice data or an error message in case of failure.
+    """
     context = {}
     try:
         # Fetching all notices
-        notices = Notice.objects.all().order_by('-created_at')
+        notices = NoticeSection.fetch_latest_notices()
         context['notices'] = notices
+        logger.info(f"Notices fetched for admin: {notices.count()}")
+
     except Exception as e:
-        context['errormsg'] = f"Error fetching notices: {e}"
+        logger.error(f"Error fetching notices: {e}")
+        context['errormsg'] = "Unable to load notices at this time. Please try again later."
 
     return render(request, 'admin-viewnotice.html', context)
 
 
 
 
-# Admin can delete particular Notice
-@login_required(login_url='/admin-login')
-def admin_delete_notice(request,nid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    notice = Notice.objects.filter(id=nid)
-    # print(notice)
-    # return HttpResponse('fetched')
-    notice.delete()
-    return redirect('/admin-viewnotice')
 
+@staff_member_required(login_url='/admin-login')
+def admin_delete_notice(request, nid: int):
+    """
+    Admin view to delete a specific notice.
+
+    Attempts to delete the notice identified by 'nid' using the NoticeService.
+    Logs any errors that occur during deletion. Regardless of success or failure,
+    redirects the admin back to the notice list page.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+        nid (int): The ID of the notice to be deleted.
+
+    Returns:
+        HttpResponseRedirect: Redirects to the admin notice listing page.
+    """
+    try:
+        deleted_count = NoticeSection.delete_notice_by_id(notice_id=nid)
+        if deleted_count == 0:
+            logger.warning(f"Admin delete notice: No notice found with id={nid}")
+    except Exception as exc:
+        logger.error(f"Error deleting notice with id={nid}: str{exc}")
+
+    return redirect("/admin-viewnotice")
 
 
 # Admin can edit particular Notice
