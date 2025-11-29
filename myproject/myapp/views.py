@@ -20,7 +20,9 @@ from twilio.rest import Client
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
 
-from myproject.myapp.services.notice import NoticeSection
+# 
+from .services import NoticeSection, ComplaintService
+#
 
 # Initialize logger for this module
 logger = logging.getLogger(__name__)
@@ -291,7 +293,6 @@ def owner_home(request):
     try:
         # Fetch latest 2 notices ordered by creation date
         notices = NoticeSection.fetch_latest_notices(limit=2)
-        notices = Notice.objects.order_by('-created_at')[:2]
         context['notice']=notices
     except Exception as e:
         logger.error(f"Error fetching notices for owner: {e}")
@@ -321,7 +322,8 @@ def owner_notice(request):
 
     try:
         # Fetch all notices in descending order of creation date
-        notices = Notice.objects.all().order_by('-created_at')
+        notices = NoticeSection.fetch_latest_notices()
+        print(notices)
         context['notices'] = notices
         logger.info(f"Notices fetched: {notices.count()}")
 
@@ -585,10 +587,26 @@ def cancelbooking(request,id):
 # Owner View Complaint
 @login_required(login_url='/owner-login')
 def owner_view_complaint(request):
+    """
+    View for displaying complaints submitted by the logged-in owner.
+
+    Fetches complaints for the authenticated user and passes them to the template.
+    Handles errors gracefully by logging them and showing a safe fallback message.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request from the client.
+
+    Returns:
+        HttpResponse: Rendered 'owner-view-complaint.html' template with complaints data
+                      or an error message if something goes wrong.
+    """
     context={}
-    c = Complaint.objects.filter(uid=request.user.id).order_by('-created_at')
-    print(c)
-    context['data']=c 
+    try:
+        complaints = ComplaintService.fetch_complaints(user_id=request.user.id)
+        context['data']=complaints 
+    except Exception as e:
+        logger.error(f"Error fetching complaints for owner: {e}")
+        context['errormsg'] = "Unable to load complaints at this time. Please try again later."
     return render(request, 'owner-view-complaint.html', context)
 
 

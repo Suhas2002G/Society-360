@@ -1,2 +1,7 @@
 WARNING 2025-10-13 19:47:14,303 views This flat's owner is already registered
 WARNING 2025-10-13 19:50:25,023 views IntegrityError during registration: (1062, "Duplicate entry 'suhas8838@gmail.com' for key 'auth_user.username'")
+WARNING 2025-11-29 20:17:19,840 log Not Found: /favicon.ico
+WARNING 2025-11-29 20:17:19,842 basehttp "GET /favicon.ico HTTP/1.1" 404 8669
+ERROR 2025-11-29 20:23:04,764 views Error fetching notices for owner: NoticeSection.fetch_latest_notices() missing 1 required positional argument: 'self'
+ERROR 2025-11-29 20:43:13,412 views Error fetching complaints for owner: cannot unpack non-iterable int object
+ERROR 2025-11-29 20:45:07,589 views Error fetching complaints for owner: cannot unpack non-iterable int object
