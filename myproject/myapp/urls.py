@@ -32,7 +32,6 @@ urlpatterns = [
     path('admin-dashboard', views.admin_dashboard),
     path('admin-addnotice', views.admin_add_notice),
     path('admin-delete-notice/<nid>', views.admin_delete_notice),
-    path('admin-edit-notice/<nid>', views.admin_edit_notice),
     path('admin-usermanage', views.admin_usermanage),
     path('removeOwner/<id>', views.removeOwner),
     path('admin-maintenance', views.admin_maintenance),
