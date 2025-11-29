@@ -19,3 +19,16 @@ class NoticeSection:
 
 
     
+    @staticmethod
+    def delete_notice_by_id(notice_id: int) -> int:
+        """
+        Delete a notice by its primary key.
+
+        Args:
+            notice_id (int): ID of the notice to delete.
+
+        Returns:
+            int: Number of Notice objects deleted (0 if none found, 1 if deleted).
+        """
+        deleted_count, _ = Notice.objects.filter(id=notice_id).delete()
+        return deleted_count
