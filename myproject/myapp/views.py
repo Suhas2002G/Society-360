@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render,redirect,HttpResponse
+from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
@@ -14,6 +14,7 @@ import datetime
 import random
 import razorpay
 from django.core.mail import send_mail 
+from .core.config import settings
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from twilio.rest import Client
@@ -207,7 +208,7 @@ def sendOTP(request):
             send_mail(
                 'Reset Password',
                 f"Your OTP for password reset is: {otp}",
-                os.getenv('EMAIL_HOST_USER'),
+                settings.EMAIL_HOST_USER,
                 [e],
                 fail_silently=False,
             )
@@ -373,8 +374,8 @@ def owner_maintenance(request):
 @login_required(login_url='/owner-login')
 def makepayment(request):
     context={}
-    RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
-    RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+    RAZORPAY_API_KEY = settings.RAZORPAY_API_KEY
+    RAZORPAY_API_PASS = settings.RAZORPAY_API_PASS
 
     print(RAZORPAY_API_KEY)
     print(RAZORPAY_API_PASS)
@@ -401,7 +402,7 @@ def makepayment(request):
 def paymentsuccess(request):
     sub='Society360 Monthly Maintenance'
     msg="We have received monthly maintenance from your side. Thank you..! "
-    frm=os.getenv('EMAIL_HOST_USER')
+    frm=settings.EMAIL_HOST_USER
 
     u=User.objects.filter(id=request.user.id)    #email should go to authenticated user only 
     to=u[0].email
@@ -494,8 +495,8 @@ def bookAmenity(request, aid):
             a = Amenity.objects.get(id=aid)
             amount = a.rent
 
-            RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
-            RAZORPAY_API_PASS = os.getenv('RAZORPAY_API_PASS')
+            RAZORPAY_API_KEY = settings.RAZORPAY_API_KEY
+            RAZORPAY_API_PASS = settings.RAZORPAY_API_PASS
 
             # print(RAZORPAY_API_KEY)
             # print(RAZORPAY_API_PASS)
@@ -535,7 +536,7 @@ def bookAmenity(request, aid):
 def amenitypaymentsuccess(request):
     sub='Society360 Amenity Booking Confirmation'
     msg="We have received your booking for amenity from your side. Thank you..! "
-    frm=os.getenv('EMAIL_HOST_USER')
+    frm=settings.EMAIL_HOST_USER
 
     u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
     to=u[0].email
@@ -817,28 +818,16 @@ def admin_delete_notice(request, nid: int):
     return redirect("/admin-viewnotice")
 
 
-# Admin can edit particular Notice
-@login_required(login_url='/admin-login')
-def admin_edit_notice(request,nid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    notice = Notice.objects.filter(id=nid)
-    context['notices'] = notice
-    return render(request, 'admin-edit-notice.html', context)
-
 
 # Admin Add New Notice
-@login_required(login_url='/admin-login')
+@staff_member_required(login_url='/admin-login')
 def admin_add_notice(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
     
     context = {}
     if request.method == 'GET':
         return render(request, 'admin-addnotice.html', context)
     else:
+
         title = request.POST['title'] 
         cat = request.POST.get('category')  
         des = request.POST['description']
@@ -852,12 +841,12 @@ def admin_add_notice(request):
                 context['successmsg'] = 'Notice has been successfully posted..!'
  
                 # Twilio SMS Integration
-                account_sid = os.getenv('ACCOUNT_SID')
-                auth_token = os.getenv('AUTH_TOKEN')
+                account_sid = settings.ACCOUNT_SID
+                auth_token = settings.AUTH_TOKEN
                 client = Client(account_sid, auth_token)
 
                 message = client.messages.create(
-                from_=os.getenv('TWILIO_PHONE_NUMBER'),
+                from_=settings.TWILIO_PHONE_NUMBER,
                 body='Admin Alert : A new notice has been added. Please check it at Society-360 portal for details.',
                 to='+917755994279'
                 )
