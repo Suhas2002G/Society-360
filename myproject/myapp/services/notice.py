@@ -7,6 +7,20 @@ class NoticeSection:
     """
 
     @staticmethod
+    def create_notice(title: str, category: str, description: str, priority: str = 'None') -> Notice:
+        """
+        Create a new notice and save it in the database.
+        """
+        notice = Notice.objects.create(
+            title=title,
+            category=category,
+            des=description,
+            priority=priority,
+        )
+        return notice
+    
+
+    @staticmethod
     def fetch_latest_notices(limit=None):
         """
         Provide latest nth notices
