@@ -13,17 +13,17 @@ import os
 import datetime
 import random
 import razorpay
-from django.core.mail import send_mail 
+
+
 from .core.config import settings
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from twilio.rest import Client
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
 from django.contrib.admin.views.decorators import staff_member_required
 
 # 
-from .services import NoticeSection, ComplaintService
+from .services import NoticeSection, AmenityService, ComplaintService, NotificationService, MaintenanceService
 #
 
 # Initialize logger for this module
@@ -203,15 +203,18 @@ def sendOTP(request):
 
             # Store email in session
             request.session['reset_email'] = e  
+            
+            try:
+                notification = NotificationService
+                # Send OTP to user email
+                notification.send_email(
+                    subject='Reset Password',
+                    messsage=f"Your OTP for password reset is: {otp}",
+                    to_email=[e]
 
-            # Send OTP to user email
-            send_mail(
-                'Reset Password',
-                f"Your OTP for password reset is: {otp}",
-                settings.EMAIL_HOST_USER,
-                [e],
-                fail_silently=False,
-            )
+                ) 
+            except Exception as e:
+                logger.error(f'Failed to send OTP: {str(e)}')
 
             return redirect('/verify-otp')  # Redirect without email in URL
         else:
@@ -400,9 +403,6 @@ def makepayment(request):
 # # Payment-Success page after paying Maintenance & Email Integration
 @login_required(login_url='/owner-login')
 def paymentsuccess(request):
-    sub='Society360 Monthly Maintenance'
-    msg="We have received monthly maintenance from your side. Thank you..! "
-    frm=settings.EMAIL_HOST_USER
 
     u=User.objects.filter(id=request.user.id)    #email should go to authenticated user only 
     to=u[0].email
@@ -412,14 +412,13 @@ def paymentsuccess(request):
     fid = Flat.objects.get(uid=request.user.id)
     # print(fid)
 
-# send_mail() function should have following sequence of parameters
-    send_mail(
-        sub,
-        msg,
-        frm,
-        [to],          #list beacause we can send mail to multiple emails-ids
-        fail_silently=False  
-        # if there is invalid email, then it will shows mail could not be delivered
+
+
+    notification = NotificationService()
+    notification.send_email(
+        subject='Society360 Monthly Maintenance',
+        message="We have received monthly maintenance from your side. Thank you..! ",
+        to_email=[to]
     )
 
     # Insert a record in the MaintenancePayment model
@@ -534,19 +533,16 @@ def bookAmenity(request, aid):
 # Owner Amenity Payment Page
 @login_required(login_url='/owner-login')
 def amenitypaymentsuccess(request):
-    sub='Society360 Amenity Booking Confirmation'
-    msg="We have received your booking for amenity from your side. Thank you..! "
-    frm=settings.EMAIL_HOST_USER
-
     u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
     to=u[0].email
 
-    send_mail(
-        sub,
-        msg,
-        frm,
-        [to],               #list beacause we can send mail to multiple emails-ids
-        fail_silently=False
+    print(f"to------->",to)
+
+    notification = NotificationService()
+    notification.send_email(
+        subject='Society360 Amenity Booking Confirmation',
+        message="We have received your booking for amenity from your side. Thank you..! ",
+        to_email=[to]
     )
 
     return render(request, 'paymentsuccess.html')
@@ -677,11 +673,9 @@ def owner_emerg_contact(request):
 #............................................................
 
 
-
-
-
 # Admin Login
 def admin_login(request):
+    '''Login function to authenticate user has admin privilages or not'''
     context = {}
     if request.method == 'GET':
         return render(request, 'admin-login.html', context)
@@ -702,57 +696,62 @@ def admin_login(request):
 
 
 # Admin Dashboard
-@login_required(login_url='/admin-login')
+@staff_member_required(login_url='/admin-login')
 def admin_dashboard(request):
+    '''Admin dashboard with owner_count, payment_amount, and basic bar-chart'''
     context={}
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    else:
-        current_datetime = timezone.now()  # Get current date (date and time)
-        current_date = current_datetime.date()  # Get only the current date (without time)
+    try:
+        # Current date (without time)
+        current_date = timezone.localdate()
 
-        ownerCount=Flat.objects.count()
-        noticeCount = Notice.objects.count()
-        compCount = Complaint.objects.count()
+        # Summary counts
+        owner_count = Flat.objects.count()
+        notice_count = Notice.objects.count()
+        comp_count = Complaint.objects.count()
 
-        # m=MaintenancePayment.objects.filter(payment_date__month=1) # get only Jan records
-        mamount = 0
-        m=MaintenancePayment.objects.all()
-        for i in m:
-            mamount += i.amount
+        
+        # Total maintenance amount (use aggregate)
+        total_maintenance = (
+            MaintenancePayment.objects.aggregate(total=Sum('amount'))['total'] or 0
+        )
 
-        context={
-            'ocount': ownerCount,
-            'ncount' : noticeCount,
-            'current_date' : current_date,
-            'mamount' : mamount,
-            'compCount':compCount,
-        }
-
-            # Aggregate maintenance payments by month
+        # Aggregate maintenance payments by month
         monthly_payments = (
             MaintenancePayment.objects
             .annotate(month=TruncMonth('payment_date'))  # Extract month from payment_date
-            .values('month')  # Group by month
-            .annotate(total_amount=Sum('amount'))  # Sum amounts for each month
-            .order_by('month')  # Order by month
+            .values('month')                            # Group by month
+            .annotate(total_amount=Sum('amount'))       # Sum amounts for each month
+            .order_by('month')                          # Order by month
         )
 
-        # Convert QuerySet to lists for JavaScript
-        months = [entry['month'].strftime('%b %Y') for entry in monthly_payments]  # Format: "Jan 2025"
-        amounts = [float(entry['total_amount']) for entry in monthly_payments]
+        # Prepare data for chart (for JS)
+        months = []
+        amounts = []
 
-        context = {
-            'ocount': ownerCount,
-            'ncount': noticeCount,
+        for entry in monthly_payments:
+            month = entry['month']
+            total = entry['total_amount'] or 0
+            # Format month like "Jan 2025"
+            months.append(month.strftime('%b %Y'))
+            amounts.append(float(total))
+
+        # Final context
+        context.update({
+            'ocount': owner_count,
+            'ncount': notice_count,
+            'compCount': comp_count,
             'current_date': current_date,
-            'mamount' : mamount,
-            'compCount': compCount,
-            'months': months,  # Pass month labels to template
-            'amounts': amounts,  # Pass corresponding amount data
-        }
+            'mamount': total_maintenance,
+            'months': months,
+            'amounts': amounts,
+        })
 
-        return render(request, 'admin-dashboard.html', context)
+        logger.debug(context)
+
+    except Exception as exc:
+        logger.exception("Dashboard data fetching failed.")
+
+    return render(request, 'admin-dashboard.html', context)
 
 
 #----------------------------------------
@@ -790,8 +789,7 @@ def admin_view_notice(request):
 
 
 
-
-
+# Delete particular notice
 @staff_member_required(login_url='/admin-login')
 def admin_delete_notice(request, nid: int):
     """
@@ -822,39 +820,287 @@ def admin_delete_notice(request, nid: int):
 # Admin Add New Notice
 @staff_member_required(login_url='/admin-login')
 def admin_add_notice(request):
+    """
+    Handle the creation of new administrative notices.
+
+    This view is accessible only to authenticated staff users.  
+    It serves two purposes based on the request method:
+
+    - GET Request:  
+      Renders the "Add Notice" form allowing the admin to input notice details.
+
+    - POST Request: 
+      Validates form input and, if valid:
+        1. Creates a new `Notice` record using the service layer (`NoticeSection`).
+        2. Sends an SMS notification (optional) via `NotificationService`.
+        3. Displays a success message if stored successfully,
+           or shows an error message if something goes wrong.
+    """
     
     context = {}
     if request.method == 'GET':
         return render(request, 'admin-addnotice.html', context)
-    else:
+    
+    # POST Method
+    title = request.POST.get('title', '').strip()
+    category = request.POST.get('category', '').strip()
+    description = request.POST.get('description', '').strip()
+    priority = request.POST.get('priority', 'None').strip()
 
-        title = request.POST['title'] 
-        cat = request.POST.get('category')  
-        des = request.POST['description']
-        priority = 'None'
+    # Basic validation
+    if not title or not category or not description:
+        context['errormsg'] = 'Please fill all the fields.'
+        return render(request, 'admin-addnotice.html', context)
 
-        if not title or not cat or not des or not priority:
-            context['errormsg'] = 'Please fill all the fields'
+    try:
+        # Create notice
+        notice = NoticeSection.create_notice(
+            title=title,
+            category=category,
+            description=description,
+            priority=priority,
+        )
+
+        # Send SMS notification (optional failure – app continues)
+        notification_service = NotificationService()
+        try:
+            message = notification_service.send_sms()
+            if message:
+                print(f"SMS sent successfully. SID: {message.sid}")
+        except Exception as sms_error:
+            # Don’t break the flow if SMS fails – just log it
+            print(f"Failed to send SMS notification: {sms_error}")
+
+        context['successmsg'] = 'Notice has been successfully posted..!'
+
+    except Exception as e:
+        print(f"Error while creating notice: {e}")
+        logger.warning(f"Error while creating notice: {e}")
+        context['errormsg'] = 'An error occurred. Please try again later.'
+
+    return render(request, 'admin-addnotice.html', context)
+
+
+#----------------------------------------
+#       ADMIN MAINTENANCE DASHBOARD SECTION 
+#----------------------------------------
+
+# Admin Maintenance Management
+@staff_member_required(login_url='/admin-login')
+def admin_maintenance(request):
+    """
+    Display the maintenance dashboard with all payment records.
+
+    Accessible only by admin (staff) users. This view queries the maintenance 
+    records from the database using the service layer and returns them for 
+    display on the admin maintenance management page.
+
+    Behavior:
+    - On success: Loads the maintenance table with stored payment records.
+    - On failure: Logs the error and returns an error message to the UI.
+
+    """
+    context = {}
+
+    try:
+        maintenance_service = MaintenanceService()
+        maintenance_records = maintenance_service.fetch_maintenance_records()
+        context['data'] = maintenance_records
+    except Exception as e:
+        logger.error(f"Failed to fetch maintenance records: {e}")
+        context['errormsg'] = 'An error occurred. Please try again later.'
+
+    return render(request, 'admin-maintenance.html', context)
+
+
+
+# Admin Maintenance Dashboard Filter
+@staff_member_required(login_url='/admin-login')
+def admin_maintenance_filter(request):
+    """
+    Filter maintenance payment records based on admin-selected criteria.
+
+    Filters available:
+        - Flat number
+        - Owner name
+        - Date range
+
+    Returns the filtered result back to the maintenance dashboard.
+    """
+    try:
+        context = {}
+        # Extract filter values safely
+        flatno = request.POST.get('flatno', '').strip()
+        ownername = request.POST.get('oname', '').strip()
+        start_date = request.POST.get('start_date', '').strip()
+        end_date = request.POST.get('end_date', '').strip()
+
+        service = MaintenanceService()
+        filtered_records = service.filter_maintenance_records(
+            flatno=flatno,
+            ownername=ownername,
+            start_date=start_date,
+            end_date=end_date
+        )
+        logger.info('Records are filtered')
+        return render(request, 'admin-maintenance.html', {'data': filtered_records})
+    except Exception as e:
+        logger.error(f"Failed to filter maintenance records: {e}")
+        context['errormsg'] = 'An error occurred. Please try again later.'
+        return render(request, 'admin-maintenance.html', context)
+
+
+#----------------------------------------
+#       ADMIN AMENITY MANAGEMENT SECTION 
+#----------------------------------------
+
+# Admin Add New Amenity
+@staff_member_required(login_url='/admin-login')
+def admin_add_amenity(request):
+    """Admin can add a new amenity."""
+    
+    context = {}
+    if request.method == 'POST':
+        # Fetching data from the form
+        amenity_name = request.POST.get('amenity')
+        description = request.POST.get('description')
+        rent = request.POST.get('rent')
+        img = request.FILES.get('img')
+
+        # Validation
+        if not amenity_name or not description or not rent or not img:
+            context['errormsg'] = "Please fill in all the fields."
         else:
             try:
-                Notice.objects.create(title=title, category=cat, des=des, priority=priority)
-                context['successmsg'] = 'Notice has been successfully posted..!'
- 
-                # Twilio SMS Integration
-                account_sid = settings.ACCOUNT_SID
-                auth_token = settings.AUTH_TOKEN
-                client = Client(account_sid, auth_token)
-
-                message = client.messages.create(
-                from_=settings.TWILIO_PHONE_NUMBER,
-                body='Admin Alert : A new notice has been added. Please check it at Society-360 portal for details.',
-                to='+917755994279'
+                AmenityService.create_amenity(
+                    amenity_name=amenity_name,
+                    description=description,
+                    rent=rent,
+                    img=img,
                 )
-                # print(message.sid)
+                context['successmsg'] = "Amenity added successfully!"
+            except Exception as e:
+                context['errormsg'] = f"Error adding amenity: {e}"
 
-            except Exception:
-                context['errormsg'] = 'An error occurred. Please try again later.'
-        return render(request, 'admin-addnotice.html', context)
+    return render(request, 'admin-addAmenity.html', context)
+
+
+
+# Admin View Amenity
+@staff_member_required(login_url='/admin-login')
+def admin_view_amenity(request):
+    """Admin can see all amenities."""
+    context = {}
+    try:
+        amenities = AmenityService.list_amenities()
+        context['amenities'] = amenities
+    except Exception as e:
+        logger.error(f"Error fetching amenities: {e}")
+        context['errormsg'] = f"Error fetching amenities: {e}"
+
+    return render(request, 'admin-viewAmenity.html', context)
+
+
+
+# Delete particular Amenity
+@staff_member_required(login_url='/admin-login')
+def admin_delete_amenity(request,aid):
+    """Admin can delete a particular amenity."""
+    try:
+        AmenityService.delete_amenity(aid)
+    except Exception as e:
+        logger.error(f"Error fetching amenities: {e}")
+    finally:    
+        return redirect('/admin-view-amenity')
+    
+
+
+# Edit particular Amenity
+@staff_member_required(login_url='/admin-login')
+def admin_edit_amenity(request, aid):
+    """Admin can edit a particular amenity."""
+    context = {}
+    try:
+        amenity = AmenityService.get_amenity(aid)
+        
+        if request.method == 'GET':
+            # For template compatibility with your original `[amenity]`
+            context['data'] = [amenity]  
+        
+        elif request.method == 'POST':
+            amenity_name = request.POST.get('amenity')
+            description = request.POST.get('description')
+            rent = request.POST.get('rent')
+            img = request.FILES.get('img') if 'img' in request.FILES else None
+
+            updated_amenity = AmenityService.update_amenity(
+                aid=aid,
+                amenity_name=amenity_name,
+                description=description,
+                rent=rent,
+                img=img,
+            )
+
+            context['data'] = [updated_amenity]
+            context['successmsg'] = "Amenity updated successfully!"
+
+    except Amenity.DoesNotExist:
+        logger.error('Amenity not found!')
+        context['errormsg'] = "Amenity not found!"
+
+    return render(request, 'admin-editAmenity.html', context)
+
+
+
+# Admin can see all bookings
+@staff_member_required(login_url='/admin-login')
+def admin_booking(request):
+    """Admin can see all amenity bookings."""
+    context = {}
+    bookings = AmenityService.list_bookings()
+    context['data'] = bookings
+    return render(request, 'admin-booking-page.html', context)
+
+
+
+#----------------------------------------
+#       ADMIN COMPLAINT MANG. SECTION 
+#----------------------------------------
+
+# Complaint Lists
+@staff_member_required(login_url='/admin-login')
+def admin_manage_complaint(request):
+    '''Admin can manage tenant complaints on dashboard'''
+    context={}
+    c = Complaint.objects.all().order_by('-created_at')
+    context['data']=c 
+    return render(request, 'admin-manage-complaint.html', context)
+
+
+
+#----------------------------------------
+#       ADMIN AMOUNT REFUND SECTION 
+#----------------------------------------
+# Refund Process
+@staff_member_required(login_url='/admin-login')
+def refund(request):    
+    context={}
+    r = Refund.objects.all().order_by('-payment_date')
+    context['data']=r
+    return render(request, 'admin-refund.html', context)
+
+
+
+# Refund Process
+@staff_member_required(login_url='/admin-login')
+def changeStatus(request,id):
+    if not request.user.is_staff:  # Check if the user is an admin or not
+        return redirect('/admin-login')
+    c = Refund.objects.get(id=id)
+    c.status='Refunded'
+    c.save()
+    return redirect('/refund')
+
 
 
 #----------------------------------------
@@ -862,10 +1108,8 @@ def admin_add_notice(request):
 #----------------------------------------
 
 # Admin can do Owner Management
-@login_required(login_url='/admin-login')
+@staff_member_required(login_url='/admin-login')
 def admin_usermanage(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
     
     context = {}
     users = User.objects.filter(is_staff=False) # Fetching users who are not staff (regular users)
@@ -891,222 +1135,3 @@ def removeOwner(request,id):
     u.delete()
     return redirect('/admin-usermanage')
 
-
-
-#----------------------------------------
-#       ADMIN MAINTENANCE DASHBOARD SECTION 
-#----------------------------------------
-
-# Admin Maintenance Management
-@login_required(login_url='/admin-login')
-def admin_maintenance(request):
-    '''Admin Maintenance Management'''
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context={}
-    m = MaintenancePayment.objects.all().order_by('-payment_date')
-    context['data'] = m
-    return render(request, 'admin-maintenance.html', context)
-
-
-
-# Admin Maintenance Dashboard Filter
-@login_required(login_url='/admin-login')
-def admin_maintenance_filter(request):
-    if not request.user.is_staff:  # Ensure only admins can access
-        return redirect('/admin-login')
-
-    context={}
-    m = MaintenancePayment.objects.all()
-
-    flatno = request.POST['flatno']  
-    ownername = request.POST['oname']  
-    start_date = request.POST['start_date'] 
-    end_date = request.POST['end_date']  
-
-    if flatno:
-        m = m.filter(fid__flat_no__icontains=flatno)
-
-    if ownername:
-        m = m.filter(uid__first_name__icontains=ownername)
-
-    if start_date:
-        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')  # Ensure the start date is converted to a datetime object
-        m = m.filter(payment_date__gte=start_date_obj)
-
-    if end_date:
-        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')  # Ensure the end date is converted to a datetime object
-        # Set the time to the last moment of the end date (23:59:59.999999)
-        end_date_obj = end_date_obj.replace(hour=23, minute=59, second=59, microsecond=999999)
-        m = m.filter(payment_date__lte=end_date_obj)
-
-    # Pass filtered results to the template
-    context['data']=m
-    return render(request, 'admin-maintenance.html', context)
-
-
-
-#----------------------------------------
-#       ADMIN AMENITY MANAGEMENT SECTION 
-#----------------------------------------
-
-# Admin Add New Amenity
-@login_required(login_url='/admin-login')
-def admin_add_amenity(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    if request.method == 'POST':
-        # Fetching data from the form
-        amenity_name = request.POST.get('amenity')
-        description = request.POST.get('description')
-        rent = request.POST.get('rent')
-        img = request.FILES.get('img')
-
-        # Validation
-        if not amenity_name or not description or not rent or not img:
-            context['errormsg'] = "Please fill in all the fields."
-        else:
-            try:
-                # Saving the new amenity
-                amenity = Amenity.objects.create(
-                    amenity=amenity_name, 
-                    des=description, 
-                    rent=rent, 
-                    img=img
-                )
-                amenity.save()
-                context['successmsg'] = "Amenity added successfully!"
-            except Exception as e:
-                context['errormsg'] = f"Error adding amenity: {e}"
-
-    return render(request, 'admin-addAmenity.html', context)
-
-
-
-# Admin View Amenity
-@login_required(login_url='/admin-login')
-def admin_view_amenity(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    try:
-        amenities = Amenity.objects.all()  # Fetching all amenities
-        context['amenities'] = amenities
-    except Exception as e:
-        context['errormsg'] = f"Error fetching amenities: {e}"
-
-    return render(request, 'admin-viewAmenity.html', context)
-
-
-
-
-# Delete particular Amenity
-@login_required(login_url='/admin-login')
-def admin_delete_amenity(request,aid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    amenity = Amenity.objects.filter(id=aid)
-    amenity.delete()
-    return redirect('/admin-view-amenity')
-
-
-
-# Edit particular Amenity
-@login_required(login_url='/admin-login')
-def admin_edit_amenity(request, aid):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context = {}
-    try:
-        amenity = Amenity.objects.get(id=aid)  # Fetch the amenity object
-        
-        if request.method == 'GET':
-            context['data'] = [amenity]  
-        
-        elif request.method == 'POST':
-            if 'amenity' in request.POST:
-                amenity.amenity = request.POST.get('amenity')
-            if 'description' in request.POST:
-                amenity.description = request.POST.get('description')
-            if 'rent' in request.POST:
-                amenity.rent = request.POST.get('rent')
-
-            # Handle image upload if it's provided
-            if 'img' in request.FILES:
-                amenity.img = request.FILES['img']
-            
-            amenity.save()  # Save the updated amenity
-
-            context['successmsg'] = "Amenity updated successfully!"
-            return render(request, 'admin-editAmenity.html', context)
-
-    except Amenity.DoesNotExist:
-        context['errormsg'] = "Amenity not found!"
-        return render(request, 'admin-editAmenity.html', context)
-
-    return render(request, 'admin-editAmenity.html', context)
-
-
-
-# Admin can see all bookings
-@login_required(login_url='/admin-login')
-def admin_booking(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context={}
-    b = BookingAmenity.objects.all().order_by('-booking_date')
-    context['data']=b
-    return render(request, 'admin-booking-page.html', context)
-
-
-
-#----------------------------------------
-#       ADMIN COMPLAINT MANG. SECTION 
-#----------------------------------------
-
-# Complaint Lists
-@login_required(login_url='/admin-login')
-def admin_manage_complaint(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context={}
-    c = Complaint.objects.all().order_by('-created_at')
-    context['data']=c 
-    return render(request, 'admin-manage-complaint.html', context)
-
-
-
-#----------------------------------------
-#       ADMIN AMOUNT REFUND SECTION 
-#----------------------------------------
-# Refund Process
-@login_required(login_url='/admin-login')
-def refund(request):
-    if not request.user.is_staff:  # Check if the user is an admin
-        return redirect('/admin-login')
-    
-    context={}
-    r = Refund.objects.all().order_by('-payment_date')
-    context['data']=r
-    return render(request, 'admin-refund.html', context)
-
-
-
-# Refund Process
-@login_required(login_url='/admin-login')
-def changeStatus(request,id):
-    if not request.user.is_staff:  # Check if the user is an admin or not
-        return redirect('/admin-login')
-    c = Refund.objects.get(id=id)
-    c.status='Refunded'
-    c.save()
-    return redirect('/refund')
