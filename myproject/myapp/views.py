@@ -533,10 +533,9 @@ def bookAmenity(request, aid):
 # Owner Amenity Payment Page
 @login_required(login_url='/owner-login')
 def amenitypaymentsuccess(request):
-    u=User.objects.filter(id=request.user.id)       #email should go to authenticated user only 
+    u=User.objects.filter(id=request.user.id)  #email should go to authenticated user only 
     to=u[0].email
 
-    print(f"to------->",to)
 
     notification = NotificationService()
     notification.send_email(
@@ -590,13 +589,6 @@ def owner_view_complaint(request):
 
     Fetches complaints for the authenticated user and passes them to the template.
     Handles errors gracefully by logging them and showing a safe fallback message.
-
-    Args:
-        request (HttpRequest): The incoming HTTP request from the client.
-
-    Returns:
-        HttpResponse: Rendered 'owner-view-complaint.html' template with complaints data
-                      or an error message if something goes wrong.
     """
     context={}
     try:
