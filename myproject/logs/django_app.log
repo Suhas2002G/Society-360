@@ -7,3 +7,5 @@ ERROR 2025-11-29 20:43:13,412 views Error fetching complaints for owner: cannot 
 ERROR 2025-11-29 20:45:07,589 views Error fetching complaints for owner: cannot unpack non-iterable int object
 ERROR 2025-11-29 20:59:22,976 views 
 ERROR 2025-11-29 20:59:44,413 views All fields are required to create a complaint.
+WARNING 2025-12-10 10:44:11,031 log Not Found: /favicon.ico
+WARNING 2025-12-10 10:44:11,032 basehttp "GET /favicon.ico HTTP/1.1" 404 8493
