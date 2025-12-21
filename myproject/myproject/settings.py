@@ -102,6 +102,8 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+# LOCAL HOST DATABASE CONFIG
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -112,6 +114,19 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+
+# PRODUCTION DATABASE CONFIG FOR RENDER
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv("DATABASE"),
+#         'USER': os.getenv("USERNAME"),
+#         'PASSWORD': os.getenv("PASSWORD"),
+#         'HOST': os.getenv("HOST"),
+#         'PORT': os.getenv("PORT"),
+#     }
+# }
 
 import colorlog
 
@@ -191,8 +206,6 @@ TIME_ZONE = 'Asia/Kolkata'  # Change to your local timezone
 USE_I18N = True
 
 USE_TZ = True
-
-
 
 
 # Static files (CSS, JavaScript, Images)
