@@ -69,6 +69,12 @@ def owner_register(request):
         context['errormsg'] = 'Please fill all the fields.'
         return render(request, 'owner-register.html', context)
 
+    # Validate username: alphabets only
+    if not uname.replace(" ", "").isalpha():
+        context['errormsg'] = 'Username must contain alphabets only.'
+        return render(request, 'owner-register.html', context)
+
+    # Check password len
     if len(password) < 8:
         context['errormsg'] = 'Password must be at least 8 characters long.'
         return render(request, 'owner-register.html', context)
@@ -103,7 +109,7 @@ def owner_register(request):
     
     except IntegrityError as e:
         logger.warning(f"IntegrityError during registration: {e}")
-        context['errormsg'] = 'User with this email already exists.'
+        context['errormsg'] = 'User with this email/mobile already exists.'
 
     except ValidationError as e:
         logger.error(f"ValidationError: {e.messages}")
