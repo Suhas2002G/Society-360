@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-4)%8pohh=oay45i65ww*^h5o66hkta3y2))w=4l7k@y$2%wjcx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Ngrok Configuration
@@ -104,29 +104,29 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 
 # LOCAL HOST DATABASE CONFIG
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'society360',    # Database name
-        'USER': 'root',
-        'PASSWORD': 'Suhas10th90.60%',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'society360',    # Database name
+#         'USER': 'root',
+#         'PASSWORD': 'Suhas10th90.60%',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # PRODUCTION DATABASE CONFIG FOR RENDER
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv("DATABASE"),
-#         'USER': os.getenv("USERNAME"),
-#         'PASSWORD': os.getenv("PASSWORD"),
-#         'HOST': os.getenv("HOST"),
-#         'PORT': os.getenv("PORT"),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DATABASE"),
+        'USER': os.getenv("USERNAME"),
+        'PASSWORD': os.getenv("PASSWORD"),
+        'HOST': os.getenv("HOST"),
+        'PORT': os.getenv("PORT"),
+    }
+}
 
 import colorlog
 
