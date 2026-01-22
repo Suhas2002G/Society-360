@@ -27,6 +27,7 @@ urlpatterns = [
     path('paymentsuccess',views.paymentsuccess),
     path('amenitypaymentsuccess',views.amenitypaymentsuccess),
 
+# admin paths
     path('admin-login', views.admin_login),
     path('admin-dashboard', views.admin_dashboard),
     path('admin-addnotice', views.admin_add_notice),
