@@ -52,7 +52,7 @@ We are using MySQL for the database. The database schema includes tables for:
 This structure ensures data integrity, ease of access, and efficient management of the system.
 
 ### Class Diagram
-![Class Diagram](documentation\class_diagram\class_diagram_svg.svg)
+![Class Diagram](documentation/class_diagram/class_diagram_svg.svg)
 
 
 ## Project Scope
