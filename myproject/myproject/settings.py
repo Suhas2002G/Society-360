@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-4)%8pohh=oay45i65ww*^h5o66hkta3y2))w=4l7k@y$2%wjcx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Ngrok Configuration
@@ -53,6 +53,7 @@ EMAIL_HOST_PASSWORD= os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT= 587      # default port of email
 EMAIL_USE_TLS=True   # TLS : Transport Layer Security is used to provide security
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_SSL_VERIFY = False   # added for SSL
 
 
 # Application definition
@@ -70,7 +71,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,29 +105,29 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 
 # LOCAL HOST DATABASE CONFIG
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'society360',    # Database name
-#         'USER': 'root',
-#         'PASSWORD': 'Suhas10th90.60%',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "society360",
+        'USER': "root",
+        'PASSWORD': "Suhas10th90.60%",
+        'HOST': "localhost",
+        'PORT': "3306",
+    }
+}
 
 
 # PRODUCTION DATABASE CONFIG FOR RENDER
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DATABASE"),
-        'USER': os.getenv("USERNAME"),
-        'PASSWORD': os.getenv("PASSWORD"),
-        'HOST': os.getenv("HOST"),
-        'PORT': os.getenv("PORT"),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv("DATABASE"),
+#         'USER': os.getenv("USERNAME"),
+#         'PASSWORD': os.getenv("PASSWORD"),
+#         'HOST': os.getenv("HOST"),
+#         'PORT': os.getenv("PORT"),
+#     }
+# }
 
 import colorlog
 
@@ -213,9 +213,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 MEDIA_URL='/media/'      #media url

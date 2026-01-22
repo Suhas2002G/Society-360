@@ -30,7 +30,7 @@ class NoticeSection:
         else:
             notices = Notice.objects.order_by('-created_at')
         return notices 
-
+    
 
     
     @staticmethod

@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
 from django.contrib.auth import login,logout
+from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
 from django.core.exceptions import ValidationError
 from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Otp, Refund
@@ -211,11 +212,11 @@ def sendOTP(request):
             request.session['reset_email'] = e  
             
             try:
-                notification = NotificationService
+                notification = NotificationService()
                 # Send OTP to user email
                 notification.send_email(
                     subject='Reset Password',
-                    messsage=f"Your OTP for password reset is: {otp}",
+                    message=f"Your OTP for password reset is: {otp}",
                     to_email=[e]
 
                 ) 
@@ -329,22 +330,23 @@ def owner_notice(request):
     Returns:
         HttpResponse: Renders 'owner-notice.html' with notices context.
     """
-    context = {}
-
+    context={}
     try:
-        # Fetch all notices in descending order of creation date
-        notices = NoticeSection.fetch_latest_notices()
-        print(notices)
-        context['notices'] = notices
-        logger.info(f"Notices fetched: {notices.count()}")
+        page_number = request.GET.get('page', 1)
 
+        notices_qs = Notice.objects.order_by('-created_at')
+
+        paginator = Paginator(notices_qs, 2)  # 2 notices per page
+        notices = paginator.get_page(page_number)
+
+        context['notices']=notices
+        logger.info(f"Notices fetched using pagination: {page_number}")
+        return render(request, 'owner-notice.html', context)
+    
     except Exception as e:
         logger.error(f"Error fetching notices for owner: {e}")
         context['errormsg'] = "Unable to load notices at this time. Please try again later."
-
-    return render(request, 'owner-notice.html', context)
-
-
+        return render(request, 'owner-notice.html', context)
 
 #----------------------------------------
 #       MAINTENANCE SECTION [PENDING]
@@ -386,8 +388,8 @@ def makepayment(request):
     RAZORPAY_API_KEY = settings.RAZORPAY_API_KEY
     RAZORPAY_API_PASS = settings.RAZORPAY_API_PASS
 
-    print(RAZORPAY_API_KEY)
-    print(RAZORPAY_API_PASS)
+    # print(RAZORPAY_API_KEY)
+    # print(RAZORPAY_API_PASS)
 
     amt = 1000
     client = razorpay.Client(auth=(RAZORPAY_API_KEY, RAZORPAY_API_PASS))
@@ -398,7 +400,7 @@ def makepayment(request):
     payment = client.order.create(data=data)
     context['payment']=payment
 
-    print(payment)
+    # print(payment)
 
     context['RAZORPAY_API_KEY']=RAZORPAY_API_KEY
     return render(request, 'pay.html', context)
@@ -1125,6 +1127,8 @@ def admin_usermanage(request):
     return render(request, 'admin-usermanage.html', context)
 
 
+
+
 # Admin can remove Owner 
 @login_required(login_url='/admin-login')
 def removeOwner(request,id):
@@ -1133,3 +1137,46 @@ def removeOwner(request,id):
     u.delete()
     return redirect('/admin-usermanage')
 
+
+
+def download_maintenance_excel(request):
+    from django.http import HttpResponse
+    from openpyxl import Workbook
+    # Create workbook and sheet
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Maintenance Records"
+
+    # Header row
+    headers = [
+        "Flat No",
+        "Owner Name",
+        "Email",
+        "Mobile",
+        "Payment Date",
+        "Amount"
+    ]
+    ws.append(headers)
+
+    # Fetch data
+    records = MaintenancePayment.objects.select_related('uid', 'fid')
+
+    # Data rows
+    for record in records:
+        ws.append([
+            record.fid.flat_no,
+            record.uid.first_name,
+            record.uid.email,
+            record.fid.mobile,
+            record.payment_date.strftime('%Y-%m-%d'),
+            float(record.amount),
+        ])
+
+    # Create response
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=maintenance_report.xlsx'
+
+    wb.save(response)
+    return response

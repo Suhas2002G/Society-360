@@ -1,54 +1,77 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block 'main' %}
+<div class="container admin-notice-view-container">
+    <div class="d-flex text-center align-items-center mt-3">
+        <h1 class="admin-usermanage-title">Notices</h1>
+    </div>
 
-    <div class="container admin-notice-view-container">
-        <div class="d-flex text-center align-items-center mt-3">
-            <h1 class="admin-usermanage-title">Notices</h1>
-        </div>
+    {% if successmsg %}
+    <div id="success" class="alert alert-success admin-notice-view-success" role="alert">
+        {{ successmsg }}
+    </div>
+    {% elif errormsg %}
+    <div id="error" class="alert alert-danger admin-notice-view-danger" role="alert">
+        {{ errormsg }}
+    </div>
+    {% endif %}
 
-        <!-- Success/Error messages -->
-        {% if successmsg %}
-        <div id="success" class="alert alert-success admin-notice-view-success" role="alert">
-            {{ successmsg }}
-        </div>
-        {% elif errormsg %}
-        <div id="error" class="alert alert-danger admin-notice-view-danger" role="alert">
-            {{ errormsg }}
-        </div>
-        {% endif %}
-
-        <!-- Notices Cards -->
-        <div class="admin-notice-cards">
-            {% for notice in notices %}
-            <div class="card admin-notice-card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-12">
-                        <div class="card-body">
-                            <h5 class="card-title admin-notice-title">{{ notice.title }}</h5>
-                            <p class="card-text admin-notice-category">
-                                <strong>Category:</strong> {{ notice.category }}
-                            </p>
-                            <!-- <p class="card-text admin-notice-priority">
-                                <strong>Priority:</strong> {{ notice.priority }}
-                            </p> -->
-                            <p class="card-text admin-notice-description">{{ notice.des }}</p>
-                            
-            
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <strong></strong> {{ notice.created_at|date:"d-m-Y h:i:s A" }}
-                                </small>
-                                
-                            </p>
-                            
-                        </div>
+    <div class="admin-notice-cards">
+        {% for notice in notices %}
+        <div class="card admin-notice-card mb-3">
+            <div class="row g-0">
+                <div class="col-md-12">
+                    <div class="card-body">
+                        <h5 class="card-title admin-notice-title">{{ notice.title }}</h5>
+                        <p class="card-text admin-notice-category">
+                            <strong>Category:</strong> {{ notice.category }}
+                        </p>
+                        <p class="card-text admin-notice-description">{{ notice.des }}</p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                {{ notice.created_at|date:"d-m-Y h:i:s A" }}
+                            </small>
+                        </p>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-
-    
+        {% empty %}
+            <p class="text-center">No notices found.</p>
+        {% endfor %}
     </div>
+
+    {% if notices.has_other_pages %}
+    <div class="pagi-container">
+        <ul class="pagi-list">
+            {% if notices.has_previous %}
+                <li class="pagi-item">
+                    <a class="pagi-link" href="?page={{ notices.previous_page_number }}">&laquo; Prev</a>
+                </li>
+            {% else %}
+                <li class="pagi-item pagi-disabled"><span class="pagi-link">&laquo; Prev</span></li>
+            {% endif %}
+
+            {% for i in notices.paginator.page_range %}
+                {% if notices.number == i %}
+                    <li class="pagi-item pagi-active"><span class="pagi-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="pagi-item">
+                        <a class="pagi-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if notices.has_next %}
+                <li class="pagi-item">
+                    <a class="pagi-link" href="?page={{ notices.next_page_number }}">Next &raquo;</a>
+                </li>
+            {% else %}
+                <li class="pagi-item pagi-disabled"><span class="pagi-link">Next &raquo;</span></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
 {% endblock 'main' %}

@@ -1888,3 +1888,57 @@ form.d-flex .btn-primary:hover {
 .admin-d-card{
   font-size: 20px;
 }
+
+
+
+/* Pagination Styling */
+.pagi-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.pagi-list {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.pagi-item {
+    margin: 0 5px;
+}
+
+.pagi-link {
+    position: relative;
+    display: block;
+    padding: 8px 16px;
+    color: #007bff;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.pagi-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0056b3;
+}
+
+.pagi-active .pagi-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.pagi-disabled .pagi-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+    opacity: 0.6;
+}
