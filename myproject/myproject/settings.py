@@ -157,7 +157,7 @@ LOGGING = {
             'formatter': 'colored',  # use colored formatter here
         },
         'file': {
-            'level': 'WARNING',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'logs', 'django_app.log'),
             'formatter': 'verbose',
@@ -170,7 +170,7 @@ LOGGING = {
         },
         'myapp': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False,
         },
     },
