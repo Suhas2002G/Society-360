@@ -15,7 +15,7 @@ import datetime
 import random
 import razorpay
 
-
+from django.core.cache import cache
 from .core.config import settings
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -330,23 +330,69 @@ def owner_notice(request):
     Returns:
         HttpResponse: Renders 'owner-notice.html' with notices context.
     """
-    context={}
+    context = {}
+
     try:
-        page_number = request.GET.get('page', 1)
+        page_number = int(request.GET.get('page', 1))
+        page_size = 2
 
-        notices_qs = Notice.objects.order_by('-created_at')
+        cache_key = f"notices:v1:page:{page_number}:size:{page_size}"
 
-        paginator = Paginator(notices_qs, 2)  # 2 notices per page
-        notices = paginator.get_page(page_number)
+        cached_data = cache.get(cache_key)
 
-        context['notices']=notices
-        logger.info(f"Notices fetched using pagination: {page_number}")
-        return render(request, 'owner-notice.html', context)
-    
+        if cached_data:
+            logger.info("Served from Redis cache")
+
+            notice_list = cached_data["notices"]
+            total_count = cached_data["total_count"]
+
+        else:
+            logger.info("Served from database")
+
+            qs = Notice.objects.order_by("-created_at")
+
+            paginator = Paginator(qs, page_size)
+            page_obj = paginator.get_page(page_number)
+
+            notice_list = list(
+                page_obj.object_list.values(
+                    "id",
+                    "title",
+                    "category",
+                    "des",
+                    "created_at"
+                )
+            )
+
+            total_count = qs.count()
+
+            cache.set(
+                cache_key,
+                {
+                    "notices": notice_list,
+                    "total_count": total_count
+                },
+                timeout=settings.CACHE_TIMEOUT
+            )
+
+            logger.info("Cache set in Redis")
+
+        # 🔹 REBUILD Page object (KEY STEP)
+        paginator = Paginator(range(total_count), page_size)
+        page_obj = paginator.get_page(page_number)
+
+        # attach notices manually
+        page_obj.object_list = notice_list
+
+        context["notices"] = page_obj
+
+        return render(request, "owner-notice.html", context)
+
     except Exception as e:
         logger.error(f"Error fetching notices for owner: {e}")
-        context['errormsg'] = "Unable to load notices at this time. Please try again later."
-        return render(request, 'owner-notice.html', context)
+        context["errormsg"] = "Unable to load notices at this time. Please try again later."
+        return render(request, "owner-notice.html", context)
+    
 
 #----------------------------------------
 #       MAINTENANCE SECTION [PENDING]

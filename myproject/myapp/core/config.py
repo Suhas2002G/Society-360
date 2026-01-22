@@ -21,5 +21,7 @@ class Settings():
     AUTH_TOKEN = os.getenv("AUTH_TOKEN")
     TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
 
+    # Redis CACHE_TIMEOUT
+    CACHE_TIMEOUT = int(os.getenv("CACHE_TIMEOUT"))
 
 settings = Settings()
