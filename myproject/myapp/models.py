@@ -3,14 +3,14 @@ from django.contrib.auth.models import User
 
 # Flat Details Model
 class Flat(models.Model):
-    uid=models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    uid=models.ForeignKey(User, on_delete=models.CASCADE, db_column='uid')
     mobile = models.CharField(max_length=10, unique=True, null=True, blank=True, help_text='Mobile number should be 10 digit')
     flat_no = models.CharField(max_length=10, null=True, blank=True)
 
 
 # Maintenance Payment Model
 class MaintenancePayment(models.Model):
-    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    uid = models.ForeignKey(User, on_delete=models.CASCADE, db_column='uid')
     fid = models.ForeignKey('Flat', on_delete=models.CASCADE, db_column='fid', null=True)
     payment_date = models.DateField()  
     amount= models.DecimalField(max_digits=10, decimal_places=2)  
@@ -18,7 +18,7 @@ class MaintenancePayment(models.Model):
 
 # Booking Amenity Model
 class BookingAmenity(models.Model):
-    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    uid = models.ForeignKey(User, on_delete=models.CASCADE, db_column='uid')
     aid = models.ForeignKey('Amenity', on_delete=models.CASCADE, db_column='aid')
     booking_date = models.DateField()  
     amount= models.DecimalField(max_digits=10, decimal_places=2)
@@ -29,7 +29,7 @@ class BookingAmenity(models.Model):
 
 # for refund purpose [after amenity cancellationn]
 class Refund(models.Model):
-    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    uid = models.ForeignKey(User, on_delete=models.CASCADE, db_column='uid')
     aid = models.ForeignKey('Amenity', on_delete=models.CASCADE, db_column='aid')  
     amount= models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateField()
@@ -43,7 +43,7 @@ class Refund(models.Model):
 
 # Complaint Model
 class Complaint(models.Model):
-    uid = models.ForeignKey('auth.user', on_delete=models.CASCADE, db_column='uid')
+    uid = models.ForeignKey(User, on_delete=models.CASCADE, db_column='uid')
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=200)
     description = models.TextField()
@@ -54,11 +54,11 @@ class Complaint(models.Model):
         return self.title
 
 
-# To Otp while Forget Password 
-class Otp(models.Model):
-    email = models.EmailField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    otp = models.CharField(max_length=4)
+# # To Otp while Forget Password 
+# class Otp(models.Model):
+#     email = models.EmailField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     otp = models.CharField(max_length=4)
 
 
 #`````````      ADMIN MODEL    ````````````
@@ -115,7 +115,7 @@ Let’s review it **section by section** 👇
 
 ⚠️ **Improvements**
 
-* You’re using `'auth.user'` string references instead of the `User` model directly — that’s fine, but not ideal for flexibility.
+* You’re using `User` string references instead of the `User` model directly — that’s fine, but not ideal for flexibility.
 * You should use `settings.AUTH_USER_MODEL` to future-proof the project.
 * Naming conventions (`uid`, `aid`, `fid`) are short — but they can be more descriptive like `user`, `amenity`, `flat` for readability.
 * Some models are missing `__str__` for admin readability.
@@ -176,7 +176,7 @@ class BookingAmenity(models.Model):
 
 * Add a `status` (Booked / Cancelled / Completed).
 * Maybe a `start_time` / `end_time` if amenities are time-bound.
-* Add `unique_together = ('user', 'amenity', 'booking_date')` to prevent duplicate bookings.
+* Add `unique_together = (User, 'amenity', 'booking_date')` to prevent duplicate bookings.
 
 ---
 

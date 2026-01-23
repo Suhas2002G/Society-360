@@ -108,7 +108,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "society360",
+        'NAME': "society360v1",
         'USER': "root",
         'PASSWORD': "Suhas10th90.60%",
         'HOST': "localhost",
@@ -116,18 +116,6 @@ DATABASES = {
     }
 }
 
-
-# PRODUCTION DATABASE CONFIG FOR RENDER
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv("DATABASE"),
-#         'USER': os.getenv("USERNAME"),
-#         'PASSWORD': os.getenv("PASSWORD"),
-#         'HOST': os.getenv("HOST"),
-#         'PORT': os.getenv("PORT"),
-#     }
-# }
 
 import colorlog
 

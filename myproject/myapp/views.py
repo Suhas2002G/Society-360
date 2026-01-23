@@ -1,3 +1,4 @@
+import hmac
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from django.contrib.auth.models import User        
 from django.contrib.auth import authenticate       
@@ -5,7 +6,7 @@ from django.contrib.auth import login,logout
 from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
 from django.core.exceptions import ValidationError
-from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Otp, Refund
+from myapp.models import Notice, Flat, Amenity, MaintenancePayment, BookingAmenity, Complaint, Refund
 from django.utils import timezone
 from django.db.models import Q  
 from datetime import date
@@ -24,7 +25,7 @@ from django.db.models import Sum
 from django.contrib.admin.views.decorators import staff_member_required
 
 # 
-from .services import NoticeSection, AmenityService, ComplaintService, NotificationService, MaintenanceService
+from .services import NoticeSection, AmenityService, ComplaintService, NotificationService, MaintenanceService, OtpService
 #
 
 # Initialize logger for this module
@@ -199,88 +200,124 @@ def forgetpass(request):
 def sendOTP(request):
     context = {}
     if request.method == "POST":
-        e = request.POST.get("uemail")
+        email = request.POST.get("uemail")
 
-        # Check if user exists
-        if User.objects.filter(email=e).exists():
-            otp = str(random.randint(1000, 9999))
+        if User.objects.filter(email=email).exists():
+            otp = OtpService.generate_otp()
+            hashed_otp = OtpService.generate_hashed_otp(otp, email)
 
-            # Save OTP 
-            Otp.objects.create(otp=otp, email=e)
+            request.session['reset_email'] = email
 
-            # Store email in session
-            request.session['reset_email'] = e  
-            
-            try:
-                notification = NotificationService()
-                # Send OTP to user email
-                notification.send_email(
-                    subject='Reset Password',
-                    message=f"Your OTP for password reset is: {otp}",
-                    to_email=[e]
+            cache.set(f"user:otp:{email}", hashed_otp, 120)  # 2 min
+            logger.info('OTP stored in Redis')
 
-                ) 
-            except Exception as e:
-                logger.error(f'Failed to send OTP: {str(e)}')
+            NotificationService().send_email(
+                subject='Reset Password',
+                message=f"Your OTP for password reset is: {otp}",
+                to_email=[email]
+            )
 
-            return redirect('/verify-otp')  # Redirect without email in URL
-        else:
-            context['errormsg'] = 'This email ID is not registered with us!'
-            return render(request, 'forget-password.html', context)
+            return redirect('/verify-otp')
 
+        context['errormsg'] = 'This email ID is not registered'
+        return render(request, 'forget-password.html', context)
 
 
 def verify_otp(request):
     context = {}
-    e = request.session.get('reset_email')   # Retrieve email from session
-    if not e:
-        return redirect('/forgetpass')  # Redirect if email is missing
+
+    email = request.session.get('reset_email')
+    if not email:
+        return redirect('/forgetpass')
 
     if request.method == 'POST':
         input_otp = request.POST.get('otp')
-        otp_entry = Otp.objects.filter(email=e).order_by('-created_at').first()
- 
-        if otp_entry.otp == input_otp:
-            return redirect('/setPass')  # Redirect to password reset page
-        else:
-            context['error_message'] = 'Incorrect OTP. Please try again.'
+
+        if not input_otp:
+            context['error_message'] = "OTP is required"
+            return render(request, 'verify-otp.html', context)
+
+        cache_key = f"user:otp:{email}"
+        stored_hash = cache.get(cache_key)
+
+        if not stored_hash:
+            context['error_message'] = "OTP expired or invalid"
+            return render(request, 'verify-otp.html', context)
+
+        input_hash = OtpService.generate_hashed_otp(input_otp, email)
+
+        if hmac.compare_digest(stored_hash, input_hash):
+            cache.delete(cache_key)                 # single-use OTP
+            request.session['otp_verified'] = True # FLAG
+
+            return redirect('/setPass')
+
+        context['error_message'] = "Invalid OTP"
+
     return render(request, 'verify-otp.html', context)
-
-
-
 
 def setPass(request):
     context = {}
-    e = request.session.get('reset_email')  # Retrieve email from session
-    if not e:
+
+    email = request.session.get('reset_email')
+    otp_verified = request.session.get('otp_verified')
+
+    if not email or not otp_verified:
         return redirect('/forgetpass')
-    
-    if request.method == 'GET':
-        return render(request, 'setPass.html')
-    else:
+
+    if request.method == 'POST':
         p = request.POST.get('pass', '')
         cp = request.POST.get('cpass', '')
 
-        if p=='' or cp=='':
+        if not p or not cp:
             context['error_message'] = 'Please fill in all fields.'
         elif p != cp:
             context['error_message'] = 'Passwords do not match.'
         else:
-            try:
-                user = User.objects.filter(email=e).first()
-                if user:
-                    user.set_password(p)
-                    user.save()
-                    request.session.flush()  # Clear session data after successful reset
-                    context['success_message'] = 'Password Successfully Reset.'
-                    return render(request,'setPass.html', context)  # Redirect to login page
-                    
-                else:
-                    context['error_message'] = 'User not found.'
-            except Exception as err:
-                context['error_message'] = 'An error occurred. Please try again.'
+            user = User.objects.filter(email=email).first()
+            if user:
+                user.set_password(p)
+                user.save()
+                request.session.flush()  # 🔥 FINAL CLEANUP
+                context['success_message'] = 'Password reset successful'
+            else:
+                context['error_message'] = 'User not found'
 
     return render(request, 'setPass.html', context)
+
+
+# def setPass(request):
+#     context = {}
+#     e = request.session.get('reset_email')  # Retrieve email from session
+#     if not e:
+#         return redirect('/forgetpass')
+    
+#     if request.method == 'GET':
+#         return render(request, 'setPass.html')
+#     else:
+#         p = request.POST.get('pass', '')
+#         cp = request.POST.get('cpass', '')
+
+#         if p=='' or cp=='':
+#             context['error_message'] = 'Please fill in all fields.'
+#         elif p != cp:
+#             context['error_message'] = 'Passwords do not match.'
+#         else:
+#             try:
+#                 user = User.objects.filter(email=e).first()
+#                 if user:
+#                     user.set_password(p)
+#                     user.save()
+#                     request.session.flush()  # Clear session data after successful reset
+#                     context['success_message'] = 'Password Successfully Reset.'
+#                     return render(request,'setPass.html', context)  # Redirect to login page
+                    
+#                 else:
+#                     context['error_message'] = 'User not found.'
+#             except Exception as err:
+#                 context['error_message'] = 'An error occurred. Please try again.'
+
+#     return render(request, 'setPass.html', context)
 
 
 
